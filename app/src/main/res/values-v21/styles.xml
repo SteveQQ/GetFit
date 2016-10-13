@@ -10,4 +10,9 @@
         <item name="android:statusBarColor">@color/material_blue_200</item>
     </style>
 
+
+    <style name="splash" parent="android:Theme.Material">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
+
 </resources>
