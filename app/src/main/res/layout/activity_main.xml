@@ -8,34 +8,47 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.steveq.getfit.MainActivity">
+    tools:context=".controller.LoginActivity">
 
     <ImageView
         android:id="@+id/appleImageView"
-        android:layout_width="125dp"
-        android:layout_height="125dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:src="@drawable/apple__material_100px"
         android:contentDescription="@string/app_icon"/>
+    <TextView
+        android:id="@+id/getNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/appleImageView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="GET FIT"
+        android:textSize="36sp"
+        android:textColor="#99000000"
+        />
 
     <EditText
         android:id="@+id/usernameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/appleImageView"
+        android:layout_above="@id/getNameTextView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp"
         android:hint="@string/username_field"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="24sp"
         android:maxLength="20"
         android:inputType="textPersonName"
         android:textColorHint="@color/material_red_300_155"/>
-
 
     <EditText
         android:id="@+id/passwordEditText"
@@ -45,11 +58,11 @@
         android:layout_below="@id/appleImageView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp"
         android:hint="@string/password_field"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="24sp"
         android:maxLength="20"
         android:textColorHint="@color/material_red_300_155"/>
 
@@ -61,6 +74,6 @@
         android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true"
         android:text="@string/login_button"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="24sp"
         android:background="@drawable/rounded_button"/>
 </RelativeLayout>
