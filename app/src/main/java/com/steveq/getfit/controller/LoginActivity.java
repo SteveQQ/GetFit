@@ -11,6 +11,7 @@ import com.steveq.getfit.model.UserManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.OkHttpClient;
 
 public class LoginActivity extends Activity {
 

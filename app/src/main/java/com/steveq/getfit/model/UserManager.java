@@ -6,7 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
+import com.steveq.getfit.BuildConfig;
+import com.steveq.getfit.R;
 import com.steveq.getfit.controller.MainActivity;
+
+import org.apache.commons.lang.RandomStringUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -117,7 +121,7 @@ public class UserManager {
                 currentUser = username;
                 Intent intent = new Intent(mContext, MainActivity.class);
                 mContext.startActivity(intent);
-                Toast.makeText(ctx, "Hello!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, "Hello!"+ RandomStringUtils.random(10, mContext.getResources().getString(R.string.alpha_num).toCharArray()), Toast.LENGTH_SHORT).show();
                 return true;
             } else {
                 Toast.makeText(ctx, "Wrong Password", Toast.LENGTH_LONG).show();

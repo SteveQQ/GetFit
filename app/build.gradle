@@ -18,6 +18,26 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildTypes {
+        applicationVariants.all { variant ->
+            variant.buildConfigField "String", "API_KEY", "\""+getApiKey()+"\""
+            variant.buildConfigField "String", "SS", "\""+getSS()+"\""
+        }
+    }
+
+}
+
+def getApiKey(){
+    def Properties props = new Properties()
+    props.load(new FileInputStream(new File('secrets.properties')))
+    return props['API_KEY']
+}
+
+def getSS(){
+    def Properties props = new Properties()
+    props.load(new FileInputStream(new File('secrets.properties')))
+    return props['SS']
 }
 
 dependencies {
@@ -27,4 +47,9 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'com.android.support:support-v4:24.2.0'
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.3'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+    compile group: 'com.fatsecret4j', name: 'fatsecret-platform', version: '1.0.1'
+
 }
