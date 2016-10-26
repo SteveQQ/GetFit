@@ -3,12 +3,12 @@ package com.steveq.getfit.model;
 public class Food {
 
     private String mName;
-    private int mCalories;
-    private int mCarbo;
-    private int mProtein;
-    private int mFat;
+    private String mCalories;
+    private String mCarbo;
+    private String mProtein;
+    private String mFat;
 
-    public Food(String name, int calories, int carbo, int protein, int fat) {
+    public Food(String name, String calories, String carbo, String protein, String fat) {
         mName = name;
         mCalories = calories;
         mCarbo = carbo;
@@ -20,39 +20,19 @@ public class Food {
         return mName;
     }
 
-    public void setName(String name) {
-        mName = name;
-    }
-
-    public int getCalories() {
+    public String getCalories() {
         return mCalories;
     }
 
-    public void setCalories(int calories) {
-        mCalories = calories;
-    }
-
-    public int getCarbo() {
+    public String getCarbo() {
         return mCarbo;
     }
 
-    public void setCarbo(int carbo) {
-        mCarbo = carbo;
-    }
-
-    public int getProtein() {
+    public String getProtein() {
         return mProtein;
     }
 
-    public void setProtein(int protein) {
-        mProtein = protein;
-    }
-
-    public int getFat() {
+    public String getFat() {
         return mFat;
-    }
-
-    public void setFat(int fat) {
-        mFat = fat;
     }
 }

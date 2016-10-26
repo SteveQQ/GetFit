@@ -1,16 +1,26 @@
 package com.steveq.getfit.controller;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -25,12 +35,17 @@ import com.fatsecret.platform.services.Response;
 import com.steveq.getfit.BuildConfig;
 import com.steveq.getfit.FatSecretImplementation.FoodSearch;
 import com.steveq.getfit.R;
+import com.steveq.getfit.model.Food;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.List;
 
+import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.Call;
@@ -44,66 +59,142 @@ public class MainActivity extends Activity {
 
     @BindView(R.id.drawerLayout) DrawerLayout mDrawerLayout;
     @BindView(R.id.drawerListView) ListView mDrawerListView;
-    private String[] titles;
-    private FoodSearch mFoodSearch;
+    @BindArray(R.array.tabs) String[] titles;
+
+    private ActionBarDrawerToggle drawerToggle;
+    private int currentPosition;
+
+    public int getCurrentPosition() {
+        return currentPosition;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
-        titles = getResources().getStringArray(R.array.tabs);
+
+        selectFragment(0);
+
+        //-----Drawer Preparation-----//
         mDrawerListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, titles));
-        mFoodSearch = new FoodSearch(this);
+        mDrawerListView.setOnItemClickListener(new DrawerItemClickListener());
 
-        Intent intent = getIntent();
-        if(Intent.ACTION_SEARCH.equals(intent.getAction())){
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            Toast.makeText(this, query, Toast.LENGTH_LONG).show();
-            getFood(query);
-        }
-
-    }
-
-    private void getFood(String query){
-
-        if(isNetworkAvailable()){
-
-            try {
-                mFoodSearch.foodsSearch(query, 0);
-            } catch (Exception e) {
-                e.printStackTrace();
+        drawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, //drawer toggle - class that allows to tie up funcionalities of action bar and drawer layout
+                R.string.open_drawer, R.string.close_drawer){
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
             }
 
-        } else {
-            Toast.makeText(this, "Network is unavailable!", Toast.LENGTH_LONG).show();
-        }
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
 
+        mDrawerLayout.addDrawerListener(drawerToggle);
+        //-----Drawer Preparation-----//
+
+        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                FragmentManager fm = getFragmentManager();
+                Fragment fragment = fm.findFragmentByTag("visible_fragment");
+
+                if(fragment instanceof  TodayPlanFragment){
+                    currentPosition = 0;
+
+                }
+                if(fragment instanceof FoodSearchFragment){
+                    currentPosition = 1;
+
+                }
+
+                setActionBarTitle(currentPosition);
+            }
+        });
+
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+//        Intent intent = getIntent();
+//        if(Intent.ACTION_SEARCH.equals(intent.getAction())){
+//            String query = intent.getStringExtra(SearchManager.QUERY);
+//
+//            Toast.makeText(this, query, Toast.LENGTH_LONG).show();
+//            try {
+//                mFoodSearch.foodsSearch(query, 0);
+//                String jsonString = mFoodSearch.getResultJsonString();
+//                Bundle args = new Bundle();
+//                args.putString("food_data", jsonString);
+//                currentFragment.setArguments(args);
+//                FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                ft.detach(currentFragment);
+//                ft.attach(currentFragment);
+//                ft.commit();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options_menu, menu);
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-
-        searchView.setSubmitButtonEnabled(true);
-        return super.onCreateOptionsMenu(menu);
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
     }
-    
-    private boolean isNetworkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        boolean isAvailable = false;
-        if(networkInfo != null && networkInfo.isConnected()){
-            isAvailable = true;
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener{
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectFragment(position);
+            Toast.makeText(MainActivity.this, position+"", Toast.LENGTH_SHORT).show();
         }
-        return isAvailable;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(drawerToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void selectFragment(int position){
+
+        Fragment fragment;
+
+        switch(position){
+            case 1:
+                fragment = new FoodSearchFragment();
+                currentPosition = 1;
+                break;
+            default:
+                fragment = new TodayPlanFragment();
+                currentPosition = 0;
+        }
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.contentFrame, fragment, "visible_fragment");
+        ft.addToBackStack(null);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.commit();
+
+        setActionBarTitle(position);
+
+        mDrawerLayout.closeDrawer(mDrawerListView);
+
+    }
+
+    private void setActionBarTitle(int position) {
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setTitle(titles[position]);
+
+    }
+
 }

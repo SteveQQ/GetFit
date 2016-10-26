@@ -8,7 +8,8 @@
     <color name="material_blue_200">#90caf9</color>
     <color name="material_red_400">#ef5350</color>
     <color name="material_red_300">#e57373</color>
-    <color name="material_red_300_155">#9be57373</color>
+    <color name="material_red_300_155">#b9e57373</color>
     <color name="matrial_brown_100">#d7ccc8</color>
     <color name="material_red_200">#ef9a9a</color>
+    <color name="material_grey">#212121</color>
 </resources>

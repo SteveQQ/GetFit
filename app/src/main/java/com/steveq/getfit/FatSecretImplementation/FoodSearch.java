@@ -1,6 +1,8 @@
 package com.steveq.getfit.FatSecretImplementation;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
@@ -8,27 +10,21 @@ import android.widget.Toast;
 
 import com.steveq.getfit.BuildConfig;
 import com.steveq.getfit.R;
+import com.steveq.getfit.model.Food;
 
-import org.apache.commons.codec.digest.HmacUtils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -37,10 +33,8 @@ import javax.crypto.spec.SecretKeySpec;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 
 public class FoodSearch {
 
@@ -51,43 +45,66 @@ public class FoodSearch {
     //-----CONSTANTS-----//
 
     private Context mContext;
-
+    private String resultJsonString;
+    //public static Food[] mFoods;
     public FoodSearch(Context context){
         mContext = context;
     }
 
     public void foodsSearch(String query, int page) throws Exception{
-        OkHttpClient client = new OkHttpClient();
+        final String jsonString;
+        //mFoods = new Food[5];
+        if(isNetworkAvailable()){
 
-        Request request = new Request.Builder()
-                .url(buildRequest(query, page))
-                .build();
+            OkHttpClient client = new OkHttpClient();
 
-        Headers requestHeaders = request.headers();
-        for (int i = 0; i < requestHeaders.size(); i++) {
-            Log.d("GETFITres", requestHeaders.name(i) + ": " + requestHeaders.value(i));
+            Request request = new Request.Builder()
+                    .url(buildRequest(query, page))
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(Call call, okhttp3.Response response) throws IOException {
+
+                    String line;
+                    StringBuilder builder = new StringBuilder();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
+                    while ((line = reader.readLine()) != null) {
+                        Log.d("GETFITres", line);
+                        builder.append(line);
+                    }
+                    Log.d("builder", builder.toString());
+                    resultJsonString = builder.toString();
+    //                        JSONObject foods = resultJson.getJSONObject("foods");
+    //                        JSONArray food = foods.getJSONArray("food");
+    //                        for(int i=0; i < food.length(); i++){
+    //                            JSONObject foodInst = food.getJSONObject(i);
+    //                            String fullDescription = foodInst.getString("food_description");
+    //                            String[] fragmentedDescription = fullDescription.split("\\|");
+    //                            mFoods[i] = new Food(
+    //                                    foodInst.getString("food_name"),
+    //                                    fragmentedDescription[0],
+    //                                    fragmentedDescription[1],
+    //                                    fragmentedDescription[2],
+    //                                    fragmentedDescription[3]
+    //                            );
+    //                        }
+                    }
+                }
+            );
+        } else {
+            Toast.makeText(mContext, "Network is unavailable!", Toast.LENGTH_LONG).show();
         }
 
-        client.newCall(request).enqueue(new Callback() {
-            @Override public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
 
-            @Override
-            public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                Headers responseHeaders = response.headers();
-                for (int i = 0; i < responseHeaders.size(); i++) {
-                    Log.d("GETFITres", responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                }
-                Log.d("GETFITres", response.body().contentType().toString());
+    }
 
-                String line;
-                BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
-                while ((line = reader.readLine()) != null) {
-                    Log.d("GETFITres", line);
-                }
-            }
-        });
+    public String getResultJsonString() {
+        return resultJsonString;
     }
 
     public String buildRequest(String query, int pageNumber) throws Exception { //Generate parametrized parameters
@@ -103,7 +120,7 @@ public class FoodSearch {
     private ArrayList<String> generateParams() { //Generate not parametrized parameters
 
         ArrayList<String> params = new ArrayList<>();
-        params.add("oauth_consumer_key=" /*...*/);
+        params.add("oauth_consumer_key=" + BuildConfig.API_KEY);
         params.add("oauth_signature_method=HMAC-SHA1");
         params.add("oauth_timestamp=" + new Long(System.currentTimeMillis() / 1000).toString());
         params.add( "oauth_nonce=" + getNonce());
@@ -132,7 +149,7 @@ public class FoodSearch {
 
     private static String sign(String sbs) throws UnsupportedEncodingException {
 
-        String key /*=...*/;
+        String key = BuildConfig.SS + "&";
         SecretKey sk = new SecretKeySpec(key.getBytes(), ALGORITHM);
         String sign = "";
         try {
@@ -163,6 +180,17 @@ public class FoodSearch {
 
     private String getNonce() {
         return RandomStringUtils.random(32, mContext.getResources().getString(R.string.alpha_num).toCharArray());
+    }
+
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager manager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        boolean isAvailable = false;
+        if(networkInfo != null && networkInfo.isConnected()){
+            isAvailable = true;
+        }
+        return isAvailable;
     }
 
     //----- Helper Functions -----//
