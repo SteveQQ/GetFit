@@ -1,20 +1,20 @@
 package com.steveq.getfit.controller;
 
-
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.ListFragment;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,49 +30,55 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class FoodSearchFragment extends ListFragment {
+public class FoodsSearchFragment extends Fragment {
 
-
-    private Food[] mFoods;
-    private FoodSearch mFoodSearch;
+    private ListView mListView;
+    private TextView emptyTextView;
     private SearchView mSearchView;
+    private FoodSearch mFoodSearch;
+    private FoodSearchAdapter adapter;
+    public static ArrayList<Food> mFoods;
+    public static final String MEAL_INDEX = "meal_index";
+    public static final String FOOD_SEARCH = "food_search";
 
-    public FoodSearchFragment() {
-        // Required empty public constructor
-    }
-
-
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-
-        if(mFoods != null) {
-            FoodSearchAdapter adapter = new FoodSearchAdapter(getActivity(), mFoods);
-            setListAdapter(adapter);
-        }
-
-
-        //Log.d("fragment", getArguments().getString("food_data"));
+        mFoods = new ArrayList<>();
         mFoodSearch = new FoodSearch(getActivity());
-        Log.d("fragment", "CREATE");
-        return  super.onCreateView(inflater, container, savedInstanceState);
-    }
 
-
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setListShown(true);
+        View view = inflater.inflate(R.layout.foods_search_list, container, false);
+        mListView = (ListView) view.findViewById(R.id.foodsSearchListView);
+        emptyTextView = (TextView) view.findViewById(android.R.id.empty);
         setHasOptionsMenu(true);
-        setEmptyText("No data to present, search something...");
-        if(mSearchView!=null) {
-            mSearchView.clearFocus();
-        }
+        mListView.setEmptyView(emptyTextView);
+        adapter = new FoodSearchAdapter(getActivity());
+        mListView.setAdapter(adapter);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(getArguments() != null){
+                    Toast.makeText(parent.getContext(), position+"", Toast.LENGTH_SHORT).show();
+                    TodayPlanFragment fragment = new TodayPlanFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(TodayPlanFragment.CHOSEN_FOOD, mFoods.get(position));
+                    bundle.putInt(MEAL_INDEX, getArguments().getInt(MEAL_INDEX));
+                    fragment.setArguments(bundle);
+
+                    FragmentManager fm = getActivity().getFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.replace(R.id.contentFrame, fragment, TodayPlanFragment.TODAY_PLAN);
+                    ft.addToBackStack(null);
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                    ft.commit();
+                }
+            }
+        });
+
+        return view;
     }
 
     @Override
@@ -83,8 +89,6 @@ public class FoodSearchFragment extends ListFragment {
         SearchManager searchManager = (SearchManager) getActivity().getApplicationContext().getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (SearchView) menu.findItem(R.id.search).getActionView();
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-
-        Log.d("fragment", "SEARCH VIEW");
         mSearchView.setSubmitButtonEnabled(true);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -132,17 +136,10 @@ public class FoodSearchFragment extends ListFragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mFoods = foodsArrayList.toArray(new Food[1]);
-        final FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(this);
-        ft.attach(this);
-        ft.commit();
+
+        mFoods = foodsArrayList;
+        adapter.notifyDataSetChanged();
+        mSearchView.clearFocus();
     }
 
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        setHasOptionsMenu(true);
-    }
 }

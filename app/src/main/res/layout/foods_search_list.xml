@@ -4,15 +4,17 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <ExpandableListView
-        android:id="@+id/expandableListView"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"/>
+    <ListView
+        android:id="@+id/foodsSearchListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <TextView
         android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="No data"/>
+        android:gravity="center"
+        android:text="No data to present, search something..."
+        android:textSize="24sp"/>
 
 </LinearLayout>

@@ -1,6 +1,9 @@
 package com.steveq.getfit.model;
 
-public class Food {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Food implements Parcelable{
 
     private String mName;
     private String mCalories;
@@ -35,4 +38,27 @@ public class Food {
     public String getFat() {
         return mFat;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mName);
+        dest.writeString(mCalories);
+        dest.writeString(mCarbo);
+        dest.writeString(mProtein);
+        dest.writeString(mFat);
+    }
+
+    private Food(Parcel in){
+        mName = in.readString();
+        mCalories = in.readString();
+        mCarbo = in.readString();
+        mProtein = in.readString();
+        mFat = in.readString();
+    }
+
 }

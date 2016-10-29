@@ -46,14 +46,12 @@ public class FoodSearch {
 
     private Context mContext;
     private String resultJsonString;
-    //public static Food[] mFoods;
     public FoodSearch(Context context){
         mContext = context;
     }
 
     public void foodsSearch(String query, int page) throws Exception{
         final String jsonString;
-        //mFoods = new Food[5];
         if(isNetworkAvailable()){
 
             OkHttpClient client = new OkHttpClient();
@@ -79,20 +77,6 @@ public class FoodSearch {
                     }
                     Log.d("builder", builder.toString());
                     resultJsonString = builder.toString();
-    //                        JSONObject foods = resultJson.getJSONObject("foods");
-    //                        JSONArray food = foods.getJSONArray("food");
-    //                        for(int i=0; i < food.length(); i++){
-    //                            JSONObject foodInst = food.getJSONObject(i);
-    //                            String fullDescription = foodInst.getString("food_description");
-    //                            String[] fragmentedDescription = fullDescription.split("\\|");
-    //                            mFoods[i] = new Food(
-    //                                    foodInst.getString("food_name"),
-    //                                    fragmentedDescription[0],
-    //                                    fragmentedDescription[1],
-    //                                    fragmentedDescription[2],
-    //                                    fragmentedDescription[3]
-    //                            );
-    //                        }
                     }
                 }
             );
@@ -127,7 +111,7 @@ public class FoodSearch {
         params.add("oauth_version=1.0");
         params.add("format=json");
         params.add("method=foods.search");
-        params.add("max_results=5");
+        params.add("max_results=10");
         return params;
     }
 

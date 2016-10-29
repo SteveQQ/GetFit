@@ -64,9 +64,6 @@ public class MainActivity extends Activity {
     private ActionBarDrawerToggle drawerToggle;
     private int currentPosition;
 
-    public int getCurrentPosition() {
-        return currentPosition;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +103,7 @@ public class MainActivity extends Activity {
                     currentPosition = 0;
 
                 }
-                if(fragment instanceof FoodSearchFragment){
+                if(fragment instanceof FoodsSearchFragment){
                     currentPosition = 1;
 
                 }
@@ -117,26 +114,6 @@ public class MainActivity extends Activity {
 
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
-
-//        Intent intent = getIntent();
-//        if(Intent.ACTION_SEARCH.equals(intent.getAction())){
-//            String query = intent.getStringExtra(SearchManager.QUERY);
-//
-//            Toast.makeText(this, query, Toast.LENGTH_LONG).show();
-//            try {
-//                mFoodSearch.foodsSearch(query, 0);
-//                String jsonString = mFoodSearch.getResultJsonString();
-//                Bundle args = new Bundle();
-//                args.putString("food_data", jsonString);
-//                currentFragment.setArguments(args);
-//                FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                ft.detach(currentFragment);
-//                ft.attach(currentFragment);
-//                ft.commit();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 
     @Override
@@ -170,7 +147,7 @@ public class MainActivity extends Activity {
 
         switch(position){
             case 1:
-                fragment = new FoodSearchFragment();
+                fragment = new FoodsSearchFragment();
                 currentPosition = 1;
                 break;
             default:

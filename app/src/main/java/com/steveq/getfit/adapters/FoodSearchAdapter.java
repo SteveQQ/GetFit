@@ -6,29 +6,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.steveq.getfit.R;
+import com.steveq.getfit.controller.FoodsSearchFragment;
 import com.steveq.getfit.model.Food;
 import com.steveq.getfit.model.Meal;
+
+import java.util.ArrayList;
 
 public class FoodSearchAdapter extends BaseAdapter {
 
     private Context mContext;
-    private Food[] mFoods;
 
-    public FoodSearchAdapter(Context context, Food[] foods) {
+    public FoodSearchAdapter(Context context) {
         mContext = context;
-        mFoods = foods;
     }
 
     @Override
     public int getCount() {
-        return mFoods.length;
+        return FoodsSearchFragment.mFoods.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return mFoods[position];
+        return FoodsSearchFragment.mFoods.get(position);
     }
 
     @Override
@@ -37,7 +39,7 @@ public class FoodSearchAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, final ViewGroup parent) {
 
         ViewHolder holder;
 
@@ -56,14 +58,13 @@ public class FoodSearchAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
         }
 
-        final Food food = mFoods[position];
+        final Food food = FoodsSearchFragment.mFoods.get(position);
 
         holder.foodName.setText(food.getName());
         holder.calories.setText(food.getCalories());
         holder.fat.setText(food.getFat());
         holder.carbs.setText(food.getCarbo());
         holder.proteins.setText(food.getProtein());
-
 
         return convertView;
     }
