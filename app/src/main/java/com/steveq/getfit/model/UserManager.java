@@ -6,13 +6,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.steveq.getfit.BuildConfig;
 import com.steveq.getfit.R;
+import com.steveq.getfit.controller.LoginActivity;
 import com.steveq.getfit.controller.MainActivity;
 
 import org.apache.commons.lang.RandomStringUtils;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -22,13 +27,11 @@ public class UserManager {
 
     private static UserManager instance = null;
     private Context mContext;
-
     private static Set<String> mUserNames;
-
-    private String currentUser;
-
+    private User mCurrentUser;
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
+    private Gson gson;
     public static final String KEY_USERS_SET = "key_users_set";
 
 
@@ -37,8 +40,11 @@ public class UserManager {
         mUserNames = new HashSet<>();
         mSharedPreferences = sPref;
         mEditor = sEdit;
-//        mEncryptor = new BasicTextEncryptor();
-//        mEncryptor.setPassword("2851#%!dsga1@$!%$");
+        gson = new Gson();
+    }
+
+    public User getCurrentUser() {
+        return mCurrentUser;
     }
 
     public static UserManager getInstance(Context ctx, SharedPreferences sharedPreferences, SharedPreferences.Editor editor){
@@ -69,105 +75,100 @@ public class UserManager {
     //******GETTERS SETTERS******//
 
     //******USERS SERVICES*****//
-//    public void changePassword(String username, String password, String newPassword, Context ctx){
-//        if(validate(username)                   &&
-//                validate(password)              &&
-//                validate(newPassword)           &&
-//                username.equals(currentUser)    &&
-//                !newPassword.equals(password)){
-//            if(passwordMatches(loadUser(username), password)) {
-//                User user = loadUser(currentUser);
-//                user.setPassword(newPassword);
-//                saveUser(currentUser, user);
-//                Toast.makeText(ctx, "Password Changed", Toast.LENGTH_LONG).show();
-//                logOut(ctx);
-//            }
-//        } else {
-//            Toast.makeText(ctx, "Insert valid credentials", Toast.LENGTH_LONG).show();
-//        }
-//    }
-//
-//    public void changeUsername(String newUsername, String password, Context ctx){
-//        if(credentialValidation(newUsername, password)){
-//            if(passwordMatches(loadUser(currentUser), password)) {
-//                User user = loadUser(currentUser);
-//                user.setUserName(newUsername);
-//                saveUser(newUsername, user);
-//                registerUser(newUsername);
-//                deleteUser(currentUser);
-//                logOut(ctx);
-//            } else {
-//                Toast.makeText(ctx, "Insert correct password", Toast.LENGTH_LONG).show();
-//            }
-//        }else {
-//            Toast.makeText(ctx, "Insert valid credentials", Toast.LENGTH_LONG).show();
-//        }
-//    }
-//
+    public void changePassword(Context ctx, String password, String newPassword){
+        if(     validate(password)              &&
+                validate(newPassword)           &&
+                newPassword.equals(password)){
+            if(!passwordMatches(mCurrentUser, password)) {
+                User user = loadUser(mCurrentUser.getUserName());
+                user.setPassword(newPassword);
+                saveUser(mCurrentUser.getUserName(), user);
+                Toast.makeText(ctx, "Password Changed", Toast.LENGTH_LONG).show();
+                logOut(ctx);
+            } else {
+                Toast.makeText(ctx, "Password duplicate", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(ctx, "Insert valid credentials", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public boolean changeUsername(Context ctx, String newUsername, String password){
+        if(credentialValidation(newUsername, password)){
+            if(passwordMatches(loadUser(mCurrentUser.getUserName()), password)) {
+                User user = loadUser(mCurrentUser.getUserName());
+                user.setUserName(newUsername);
+                saveUser(newUsername, user);
+                registerUser(newUsername);
+                deleteUser(mCurrentUser.getUserName());
+                logOut(ctx);
+                return true;
+            } else {
+                Toast.makeText(ctx, "Insert correct password", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }else {
+            Toast.makeText(ctx, "Insert valid credentials", Toast.LENGTH_LONG).show();
+            return false;
+        }
+    }
+
     public boolean createNewUser(Context ctx, String username, String password){
         if(credentialValidation(username, password) && !mUserNames.contains(username)){
-            saveUser(username, password);
-            Toast.makeText(ctx, "User added", Toast.LENGTH_LONG).show();
+            saveUser(username, new User(username, password));
+            registerUser(username);
             return true;
         } else {
-            Toast.makeText(ctx, "User already exists", Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, "User already exists", Toast.LENGTH_SHORT).show();
             return false;
         }
     }
 
     public boolean logIn(Context ctx, String username, String password){
         if(credentialValidation(username, password) && mUserNames.contains(username)){
-            if(passwordMatches(loadUser(username, password), password)){
-                currentUser = username;
+            if(passwordMatches(loadUser(username), password)){
+                mCurrentUser = loadUser(username);
                 Intent intent = new Intent(mContext, MainActivity.class);
                 mContext.startActivity(intent);
                 Toast.makeText(ctx, "Hello!"+ RandomStringUtils.random(10, mContext.getResources().getString(R.string.alpha_num).toCharArray()), Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                Toast.makeText(ctx, "Wrong Password", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        } else {
+            Toast.makeText(ctx, "No such user", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
+    public boolean logOut(Context ctx){
+        Intent intent = new Intent(ctx, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        ctx.startActivity(intent);
+        return true;
+    }
+
+    public boolean removeUser(Context ctx, String password){
+        if(credentialValidation(mCurrentUser.getUserName(), password) && mUserNames.contains(mCurrentUser.getUserName())){
+            if(passwordMatches(loadUser(mCurrentUser.getUserName()), password)){
+                deleteUser(mCurrentUser.getUserName());
+                Toast.makeText(ctx, "User Removed", Toast.LENGTH_LONG).show();
+                logOut(ctx);
                 return true;
             } else {
                 Toast.makeText(ctx, "Wrong Password", Toast.LENGTH_LONG).show();
                 return false;
             }
         } else {
-            Toast.makeText(ctx, "No such user", Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, "Wrong Credentials", Toast.LENGTH_LONG).show();
             return false;
         }
     }
 
-//    public boolean logOut(Context ctx){
-//        Intent intent = new Intent(ctx, LoginActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        ctx.startActivity(intent);
-//        return true;
-//    }
-//
-//    public boolean removeUser(String password, Context ctx){
-//        if(credentialValidation(currentUser, password) && mUserNames.contains(currentUser)){
-//            if(passwordMatches(loadUser(currentUser), password)){
-//                deleteUser(currentUser);
-//                Toast.makeText(ctx, "User Removed", Toast.LENGTH_LONG).show();
-//                return true;
-//            } else {
-//                Toast.makeText(ctx, "Wrong Password", Toast.LENGTH_LONG).show();
-//                return false;
-//            }
-//        } else {
-//            Toast.makeText(ctx, "Wrong Credentials", Toast.LENGTH_LONG).show();
-//            return false;
-//        }
-//    }
-
     //******USERS SERVICES*****//
 
     //******HELPER METHODS*****//
-    private int hashUser(String username, String password){
-        int result = 0;
-        if(!(username == null && password == null)) {
-            result = username.hashCode();
-            result = 31 * result + password.hashCode();
-        }
-        return result;
-    }
-
     public void initializeUsersList(){
         setUserName((HashSet<String>) mSharedPreferences.getStringSet(KEY_USERS_SET, null));
     }
@@ -175,12 +176,12 @@ public class UserManager {
     private boolean registerUser(String user){
         mUserNames.add(user);
         mEditor.putStringSet(KEY_USERS_SET, mUserNames);
-        mEditor.apply();
+        mEditor.commit();
         return true;
     }
 
-    private boolean passwordMatches(String insertedPassword, String password){
-        return insertedPassword.equals(password);
+    private boolean passwordMatches(User user, String password){
+        return user.getPassword().equals(password);
     }
 
 
@@ -192,32 +193,35 @@ public class UserManager {
 
     private boolean credentialValidation(String username, String password){
         if(!validate(username) || username.equals("")) {
-            Toast.makeText(mContext, "Insert valid User Name", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "Insert valid User Name", Toast.LENGTH_SHORT).show();
         } else if(!validate(password) || password.equals("")){
-            Toast.makeText(mContext, "Insert valid Password", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "Insert valid Password", Toast.LENGTH_SHORT).show();
         } else {
             return true;
         }
         return false;
     }
 
-    private String loadUser(String username, String password){
-        return mSharedPreferences.getString(hashUser(username, password)+"", null);
+    private User loadUser(String username){
+        String jsonUser = mSharedPreferences.getString(username, "");
+        return gson.fromJson(jsonUser, User.class);
     }
 
-    private boolean saveUser(String username, String password){
-        mEditor.putString(hashUser(username, password)+"", password);
+    public boolean saveUser(String username, User user){
+
+        String jsonUser = gson.toJson(user);
+        mEditor.putString(username, jsonUser);
         mEditor.commit();
-        registerUser(username);
+
         return true;
     }
-//
-//    private boolean deleteUser(String username){
-//        mSharedPreferencesEditor.remove(username);
-//        mUserNames.remove(username);
-//        mSharedPreferencesEditor.putStringSet("usersSet", mUserNames);
-//        mSharedPreferencesEditor.commit();
-//        return true;
-//    }
+
+    private boolean deleteUser(String username){
+        mEditor.remove(username);
+        mUserNames.remove(username);
+        mEditor.putStringSet(KEY_USERS_SET, mUserNames);
+        mEditor.commit();
+        return true;
+    }
     //******HELPER METHODS*****//
 }

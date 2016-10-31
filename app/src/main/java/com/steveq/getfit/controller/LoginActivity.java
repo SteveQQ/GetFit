@@ -34,8 +34,6 @@ public class LoginActivity extends Activity {
             public void onClick(View v) {
               if(!mUserManager.logIn(LoginActivity.this, mUsernameEditText.getText().toString(), mPasswordEditText.getText().toString())){
                   mCreateNewUserButton.setVisibility(View.VISIBLE);
-                  mUsernameEditText.setText("");
-                  mPasswordEditText.setText("");
               }
             }
         });
@@ -44,6 +42,7 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mUserManager.createNewUser(LoginActivity.this, mUsernameEditText.getText().toString(), mPasswordEditText.getText().toString());
+                mUserManager.logIn(LoginActivity.this, mUsernameEditText.getText().toString(), mPasswordEditText.getText().toString());
                 mUsernameEditText.setText("");
                 mPasswordEditText.setText("");
             }

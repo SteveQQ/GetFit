@@ -13,12 +13,12 @@ public class Meal {
         mFoodList = new ArrayList<>();
     }
 
-    public void addFood(Food food){
-        mFoodList.add(food);
+    public ArrayList<Food> getFoodList() {
+        return mFoodList;
     }
 
-    public void removeFood(Food food){
-        mFoodList.remove(food);
+    public void setFoodList(ArrayList<Food> foodList) {
+        mFoodList = foodList;
     }
 
     public String toString(){

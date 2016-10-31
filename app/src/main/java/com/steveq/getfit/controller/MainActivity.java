@@ -36,6 +36,7 @@ import com.steveq.getfit.BuildConfig;
 import com.steveq.getfit.FatSecretImplementation.FoodSearch;
 import com.steveq.getfit.R;
 import com.steveq.getfit.model.Food;
+import com.steveq.getfit.model.UserManager;
 
 import org.json.JSONObject;
 
@@ -57,6 +58,10 @@ import okhttp3.Request;
 public class MainActivity extends Activity {
 
 
+    private static final String TAG_FOOD_SEARCH = "tag_food_search";
+    private static final String TAG_ACCOUNT_MANAGEMENT = "account_management";
+    private static final String TAG_TODAY_PLAN = "today_plan";
+    private FragmentManager mFragmentManager;
     @BindView(R.id.drawerLayout) DrawerLayout mDrawerLayout;
     @BindView(R.id.drawerListView) ListView mDrawerListView;
     @BindArray(R.array.tabs) String[] titles;
@@ -70,6 +75,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        mFragmentManager = getFragmentManager();
 
         selectFragment(0);
 
@@ -96,8 +103,8 @@ public class MainActivity extends Activity {
         getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
-                FragmentManager fm = getFragmentManager();
-                Fragment fragment = fm.findFragmentByTag("visible_fragment");
+                String fragmentTag = mFragmentManager.getBackStackEntryAt(mFragmentManager.getBackStackEntryCount() - 1).getName();
+                Fragment fragment = mFragmentManager.findFragmentByTag(fragmentTag);
 
                 if(fragment instanceof  TodayPlanFragment){
                     currentPosition = 0;
@@ -144,20 +151,28 @@ public class MainActivity extends Activity {
     public void selectFragment(int position){
 
         Fragment fragment;
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
 
         switch(position){
             case 1:
                 fragment = new FoodsSearchFragment();
+                ft.replace(R.id.contentFrame, fragment, TAG_FOOD_SEARCH);
+                ft.addToBackStack(TAG_FOOD_SEARCH);
                 currentPosition = 1;
+                break;
+            case 5:
+                fragment = new AccountFragment();
+                ft.replace(R.id.contentFrame, fragment, TAG_ACCOUNT_MANAGEMENT);
+                ft.addToBackStack(TAG_ACCOUNT_MANAGEMENT);
+                currentPosition = 5;
                 break;
             default:
                 fragment = new TodayPlanFragment();
+                ft.replace(R.id.contentFrame, fragment, TAG_TODAY_PLAN);
+                ft.addToBackStack(TAG_TODAY_PLAN);
                 currentPosition = 0;
         }
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.contentFrame, fragment, "visible_fragment");
-        ft.addToBackStack(null);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
 

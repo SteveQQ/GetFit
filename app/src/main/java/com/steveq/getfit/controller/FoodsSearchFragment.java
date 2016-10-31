@@ -23,6 +23,7 @@ import com.steveq.getfit.FatSecretImplementation.FoodSearch;
 import com.steveq.getfit.R;
 import com.steveq.getfit.adapters.FoodSearchAdapter;
 import com.steveq.getfit.model.Food;
+import com.steveq.getfit.model.UserManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +41,7 @@ public class FoodsSearchFragment extends Fragment {
     public static ArrayList<Food> mFoods;
     public static final String MEAL_INDEX = "meal_index";
     public static final String FOOD_SEARCH = "food_search";
+    UserManager mUserManager;
 
     @Nullable
     @Override
@@ -47,6 +49,7 @@ public class FoodsSearchFragment extends Fragment {
 
         mFoods = new ArrayList<>();
         mFoodSearch = new FoodSearch(getActivity());
+        mUserManager = UserManager.getInstance();
 
         View view = inflater.inflate(R.layout.foods_search_list, container, false);
         mListView = (ListView) view.findViewById(R.id.foodsSearchListView);
@@ -67,6 +70,8 @@ public class FoodsSearchFragment extends Fragment {
                     bundle.putParcelable(TodayPlanFragment.CHOSEN_FOOD, mFoods.get(position));
                     bundle.putInt(MEAL_INDEX, getArguments().getInt(MEAL_INDEX));
                     fragment.setArguments(bundle);
+
+                    mUserManager.getCurrentUser().getListMeals().get(getArguments().getInt(MEAL_INDEX)).getFoodList().add(mFoods.get(position));
 
                     FragmentManager fm = getActivity().getFragmentManager();
                     FragmentTransaction ft = fm.beginTransaction();

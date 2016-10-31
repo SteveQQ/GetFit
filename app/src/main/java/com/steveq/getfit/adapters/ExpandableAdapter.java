@@ -16,6 +16,7 @@ import com.steveq.getfit.controller.TodayPlanFragment;
 import com.steveq.getfit.model.Food;
 import com.steveq.getfit.model.Meal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +26,9 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
     private Context mContext;
     private Fragment mFragment;
     private List<Meal> mMeals;
-    private HashMap<Meal, List<Food>> mFoods;
+    private HashMap<Meal, ArrayList<Food>> mFoods;
 
-    public ExpandableAdapter(Context context, Fragment fragment, List<Meal> meals, HashMap<Meal,List<Food>> foods) {
+    public ExpandableAdapter(Context context, Fragment fragment, List<Meal> meals, HashMap<Meal, ArrayList<Food>> foods) {
         mContext = context;
         mMeals = meals;
         mFoods = foods;
@@ -41,7 +42,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return mFoods.size();
+        return mFoods.get(mMeals.get(groupPosition)).size();
     }
 
     @Override
@@ -52,10 +53,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
     @Override
     public Object getChild(int groupPosition, int childPosition) {
 
-        if(mFoods.get(mMeals.get(groupPosition)).size() != 0) {
-            return mFoods.get(mMeals.get(groupPosition)).get(childPosition);
-        }
-        return new Food("empty", null, null, null, null);
+        return mFoods.get(mMeals.get(groupPosition)).get(childPosition);
     }
 
     @Override
@@ -114,33 +112,30 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
-        if(getChild(groupPosition, childPosition) != null) {
-            ChildViewHolder holder;
+        ChildViewHolder holder;
 
-            if (convertView == null) {
-                convertView = LayoutInflater.from(mContext).inflate(R.layout.expandable_list_item_child, null);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.expandable_list_item_child, null);
 
-                holder = new ChildViewHolder();
-                holder.foodName = (TextView) convertView.findViewById(R.id.foodNameTextView);
-                holder.calories = (TextView) convertView.findViewById(R.id.caloriesTextView);
-                holder.fat = (TextView) convertView.findViewById(R.id.fatTextView);
-                holder.carbs = (TextView) convertView.findViewById(R.id.carbsTextView);
-                holder.proteins = (TextView) convertView.findViewById(R.id.proteinTextView);
+            holder = new ChildViewHolder();
+            holder.foodName = (TextView) convertView.findViewById(R.id.foodNameTextView);
+            holder.calories = (TextView) convertView.findViewById(R.id.caloriesTextView);
+            holder.fat = (TextView) convertView.findViewById(R.id.fatTextView);
+            holder.carbs = (TextView) convertView.findViewById(R.id.carbsTextView);
+            holder.proteins = (TextView) convertView.findViewById(R.id.proteinTextView);
 
-                convertView.setTag(holder);
-            } else {
-                holder = (ChildViewHolder) convertView.getTag();
-            }
-
-            final Food food = (Food) getChild(groupPosition, childPosition);
-
-            holder.foodName.setText(food.getName());
-            holder.calories.setText(food.getCalories());
-            holder.fat.setText(food.getFat());
-            holder.carbs.setText(food.getCarbo());
-            holder.proteins.setText(food.getProtein());
-
+            convertView.setTag(holder);
+        } else {
+            holder = (ChildViewHolder) convertView.getTag();
         }
+
+        final Food food = (Food) getChild(groupPosition, childPosition);
+
+        holder.foodName.setText(food.getName());
+        holder.calories.setText(food.getCalories());
+        holder.fat.setText(food.getFat());
+        holder.carbs.setText(food.getCarbo());
+        holder.proteins.setText(food.getProtein());
         return convertView;
     }
 
