@@ -5,61 +5,79 @@
               android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/newLoginEditText"
-        android:inputType="textPersonName"
+        android:id="@+id/ageEditText"
+        android:inputType="number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="New Login..."
+        android:hint="Age..."
+        android:textSize="24sp"
+        android:textColorHint="@color/material_red_300_155"/>
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/maleRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="male"/>
+
+        <RadioButton
+            android:id="@+id/femaleRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="female"/>
+
+    </RadioGroup>
+
+
+    <EditText
+        android:id="@+id/heightEditText"
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Height..."
         android:textSize="24sp"
         android:textColorHint="@color/material_red_300_155"/>
 
     <EditText
-        android:id="@+id/oldPasswordEditText"
-        android:inputType="textPassword"
+        android:id="@+id/weightEditText"
+        android:inputType="number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password..."
-        android:textSize="24sp"
-        android:textColorHint="@color/material_red_300_155"/>
-
-    <EditText
-        android:id="@+id/newPasswordEditText"
-        android:inputType="textPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="New Password..."
+        android:hint="Weight..."
         android:textSize="24sp"
         android:textColorHint="@color/material_red_300_155"/>
 
     <Button
-        android:id="@+id/changeLoginButton"
+        android:id="@+id/suggestCaloriesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Change Login"
+        android:text="Suggest Calories"
         android:textSize="24sp"
         android:background="@drawable/rounded_button"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"/>
 
-    <Button
-        android:id="@+id/changePasswordButton"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/caloriesEditText"
+        android:inputType="number"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Change Password"
+        android:hint="Calories..."
         android:textSize="24sp"
-        android:background="@drawable/rounded_button"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"/>
-
+        android:textColorHint="@color/material_red_300_155"/>
 
     <Button
-        android:id="@+id/deleteUserButton"
+        android:id="@+id/confirmCaloriesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="DELETE"
+        android:text="Confirm Calories"
         android:textSize="24sp"
         android:background="@drawable/rounded_button"
         android:paddingLeft="4dp"
