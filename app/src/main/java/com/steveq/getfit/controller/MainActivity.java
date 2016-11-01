@@ -61,6 +61,7 @@ public class MainActivity extends Activity {
     private static final String TAG_FOOD_SEARCH = "tag_food_search";
     private static final String TAG_ACCOUNT_MANAGEMENT = "account_management";
     private static final String TAG_TODAY_PLAN = "today_plan";
+    private static final String TAG_CALORIES_PREFS = "calories_prefs";
     private FragmentManager mFragmentManager;
     @BindView(R.id.drawerLayout) DrawerLayout mDrawerLayout;
     @BindView(R.id.drawerListView) ListView mDrawerListView;
@@ -114,6 +115,14 @@ public class MainActivity extends Activity {
                     currentPosition = 1;
 
                 }
+                if(fragment instanceof CaloriesFragment){
+                    currentPosition = 4;
+
+                }
+                if(fragment instanceof AccountFragment){
+                    currentPosition = 5;
+
+                }
 
                 setActionBarTitle(currentPosition);
             }
@@ -159,6 +168,12 @@ public class MainActivity extends Activity {
                 ft.replace(R.id.contentFrame, fragment, TAG_FOOD_SEARCH);
                 ft.addToBackStack(TAG_FOOD_SEARCH);
                 currentPosition = 1;
+                break;
+            case 4:
+                fragment = new CaloriesFragment();
+                ft.replace(R.id.contentFrame, fragment, TAG_CALORIES_PREFS);
+                ft.addToBackStack(TAG_CALORIES_PREFS);
+                currentPosition = 4;
                 break;
             case 5:
                 fragment = new AccountFragment();

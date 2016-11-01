@@ -23,7 +23,8 @@
             android:id="@+id/maleRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="male"/>
+            android:text="male"
+            android:tag="male"/>
 
         <RadioButton
             android:id="@+id/femaleRadioButton"

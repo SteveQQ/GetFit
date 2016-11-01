@@ -8,6 +8,11 @@ public class User {
     private String mUserName;
     private String mPassword;
     private ArrayList<Meal> mListMeals;
+    private int mAge;
+    private String mSex;
+    private int mHeight;
+    private int mWeight;
+    private int mCalories;
 
 
     public User(String userName, String password) {
@@ -36,6 +41,38 @@ public class User {
 
     }
 
+    public int getAge() {
+        return mAge;
+    }
+
+    public void setAge(int age) {
+        mAge = age;
+    }
+
+    public String getSex() {
+        return mSex;
+    }
+
+    public void setSex(String sex) {
+        mSex = sex;
+    }
+
+    public int getHeight() {
+        return mHeight;
+    }
+
+    public void setHeight(int height) {
+        mHeight = height;
+    }
+
+    public int getWeight() {
+        return mWeight;
+    }
+
+    public void setWeight(int weight) {
+        mWeight = weight;
+    }
+
     public String getUserName() {
         return mUserName;
     }
@@ -50,6 +87,14 @@ public class User {
 
     public void setPassword(String password) {
         mPassword = password;
+    }
+
+    public int getCalories() {
+        return mCalories;
+    }
+
+    public void setCalories(int calories) {
+        mCalories = calories;
     }
 
     @Override
