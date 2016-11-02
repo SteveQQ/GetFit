@@ -6,10 +6,8 @@
     <string name="login_button">Log In</string>
     <string name="create_new">CREATE NEW</string>
     <string-array name="tabs">
-        <item>Today</item>
+        <item>Today Plan</item>
         <item>Search Food</item>
-        <item>History</item>
-        <item>Favourites</item>
         <item>Preferences</item>
         <item>Account</item>
     </string-array>

@@ -95,11 +95,14 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
         bundle.putInt(FoodsSearchFragment.MEAL_INDEX, index);
         fragment.setArguments(bundle);
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.contentFrame, fragment, FoodsSearchFragment.FOOD_SEARCH);
-        ft.addToBackStack(null);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        ft.commit();
+        ((MainActivity)getActivity()).selectFragment(1, fragment);
+
+//        FragmentTransaction ft = getFragmentManager().beginTransaction();
+//        ft.replace(R.id.contentFrame, fragment, FoodsSearchFragment.FOOD_SEARCH);
+//        ft.addToBackStack(null);
+//        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//        ft.commit();
+//        ((MainActivity)getActivity()).setActionBarTitle(1);
     }
 
     @Override

@@ -24,7 +24,11 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
+
+        View view = this.getLayoutInflater().inflate(R.layout.login_activity, null, false);
+        view.setOnClickListener(new DismissKeybord(this));
+        setContentView(view);
+        //setContentView(R.layout.login_activity);
 
         mUserManager = UserManager.getInstance();
         ButterKnife.bind(this);

@@ -8,10 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.steveq.getfit.R;
+import com.steveq.getfit.controller.MainActivity;
 import com.steveq.getfit.controller.TodayPlanFragment;
 import com.steveq.getfit.model.Food;
 import com.steveq.getfit.model.Meal;
@@ -85,7 +87,8 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.expandable_list_item, null);
             holder = new ParentViewHolder();
             holder.mealNameTextView = (TextView) convertView.findViewById(R.id.mealName);
-            holder.addFoodButton = (Button)convertView.findViewById(R.id.addFoodButton);
+            holder.addFoodButton = (ImageView)convertView.findViewById(R.id.addFoodButton);
+            //holder.addFoodButton = (Button)convertView.findViewById(R.id.addFoodButton);
             convertView.setTag(holder);
         } else {
             holder = (ParentViewHolder)convertView.getTag();
@@ -98,6 +101,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
         holder.addFoodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 ((TodayPlanFragment)mFragment).onItemButtonClick(holder.mIndex);
             }
         });
@@ -149,7 +153,8 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 
     private static class ParentViewHolder{
         TextView mealNameTextView;
-        Button addFoodButton;
+        ImageView addFoodButton;
+        //Button addFoodButton;
         int mIndex;
     }
 

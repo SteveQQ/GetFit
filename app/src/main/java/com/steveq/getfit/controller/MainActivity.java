@@ -116,11 +116,11 @@ public class MainActivity extends Activity {
 
                 }
                 if(fragment instanceof CaloriesFragment){
-                    currentPosition = 4;
+                    currentPosition = 2;
 
                 }
                 if(fragment instanceof AccountFragment){
-                    currentPosition = 5;
+                    currentPosition = 3;
 
                 }
 
@@ -169,17 +169,17 @@ public class MainActivity extends Activity {
                 ft.addToBackStack(TAG_FOOD_SEARCH);
                 currentPosition = 1;
                 break;
-            case 4:
+            case 2:
                 fragment = new CaloriesFragment();
                 ft.replace(R.id.contentFrame, fragment, TAG_CALORIES_PREFS);
                 ft.addToBackStack(TAG_CALORIES_PREFS);
-                currentPosition = 4;
+                currentPosition = 2;
                 break;
-            case 5:
+            case 3:
                 fragment = new AccountFragment();
                 ft.replace(R.id.contentFrame, fragment, TAG_ACCOUNT_MANAGEMENT);
                 ft.addToBackStack(TAG_ACCOUNT_MANAGEMENT);
-                currentPosition = 5;
+                currentPosition = 3;
                 break;
             default:
                 fragment = new TodayPlanFragment();
@@ -197,7 +197,46 @@ public class MainActivity extends Activity {
 
     }
 
-    private void setActionBarTitle(int position) {
+    public void selectFragment(int position, Fragment fragment){
+
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
+
+        switch(position){
+            case 1:
+                fragment = new FoodsSearchFragment();
+                ft.replace(R.id.contentFrame, fragment, TAG_FOOD_SEARCH);
+                ft.addToBackStack(TAG_FOOD_SEARCH);
+                currentPosition = 1;
+                break;
+            case 2:
+                fragment = new CaloriesFragment();
+                ft.replace(R.id.contentFrame, fragment, TAG_CALORIES_PREFS);
+                ft.addToBackStack(TAG_CALORIES_PREFS);
+                currentPosition = 2;
+                break;
+            case 3:
+                fragment = new AccountFragment();
+                ft.replace(R.id.contentFrame, fragment, TAG_ACCOUNT_MANAGEMENT);
+                ft.addToBackStack(TAG_ACCOUNT_MANAGEMENT);
+                currentPosition = 3;
+                break;
+            default:
+                fragment = new TodayPlanFragment();
+                ft.replace(R.id.contentFrame, fragment, TAG_TODAY_PLAN);
+                ft.addToBackStack(TAG_TODAY_PLAN);
+                currentPosition = 0;
+        }
+
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.commit();
+
+        setActionBarTitle(position);
+
+        mDrawerLayout.closeDrawer(mDrawerListView);
+
+    }
+
+    public void setActionBarTitle(int position) {
 
         ActionBar actionBar = getActionBar();
         actionBar.setTitle(titles[position]);
