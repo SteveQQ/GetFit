@@ -44,14 +44,14 @@ public class FoodSearchAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if(convertView == null){
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.expandable_list_item_child, null);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_child_simple, null);
 
             holder = new ViewHolder();
             holder.foodName = (TextView)convertView.findViewById(R.id.foodNameTextView);
-            holder.calories = (TextView)convertView.findViewById(R.id.caloriesTextView);
-            holder.fat = (TextView)convertView.findViewById(R.id.fatTextView);
-            holder.carbs = (TextView)convertView.findViewById(R.id.carbsTextView);
-            holder.proteins = (TextView)convertView.findViewById(R.id.proteinTextView);
+            holder.caloriesTitle = (TextView)convertView.findViewById(R.id.caloriesTextViewTitle);
+            holder.fatTitle = (TextView)convertView.findViewById(R.id.fatTextViewTitle);
+            holder.carbsTitle = (TextView)convertView.findViewById(R.id.carbsTextViewTitle);
+            holder.proteinsTitle = (TextView)convertView.findViewById(R.id.proteinTextViewTitle);
 
             convertView.setTag(holder);
         } else {
@@ -61,19 +61,19 @@ public class FoodSearchAdapter extends BaseAdapter {
         final Food food = FoodsSearchFragment.mFoods.get(position);
 
         holder.foodName.setText(food.getName());
-        holder.calories.setText(food.getCalories());
-        holder.fat.setText(food.getFat());
-        holder.carbs.setText(food.getCarbo());
-        holder.proteins.setText(food.getProtein());
+        holder.caloriesTitle.setText(food.getCalories());
+        holder.fatTitle.setText(food.getFat());
+        holder.carbsTitle.setText(food.getCarbo());
+        holder.proteinsTitle.setText(food.getProtein());
 
         return convertView;
     }
 
     private static class ViewHolder{
         TextView foodName;
-        TextView calories;
-        TextView fat;
-        TextView carbs;
-        TextView proteins;
+        TextView caloriesTitle;
+        TextView fatTitle;
+        TextView carbsTitle;
+        TextView proteinsTitle;
     }
 }

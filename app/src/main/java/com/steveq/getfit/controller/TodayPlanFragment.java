@@ -3,6 +3,7 @@ package com.steveq.getfit.controller;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class TodayPlanFragment extends Fragment implements ExpandableAdapter.itemButtonClickable {
 
     ExpandableAdapter expandableListAdapter;
@@ -31,6 +35,7 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
     public static final String CHOSEN_FOOD = "chosen_food";
     public static final String TODAY_PLAN = "today_plan";
     private UserManager mUserManager;
+    @BindView(R.id.caloriesCounterTextView) TextView caloriesCounterTextView;
 
     public TodayPlanFragment() {
         // Required empty public constructor
@@ -42,22 +47,34 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
         mUserManager = UserManager.getInstance();
 
         View view =  inflater.inflate(R.layout.today_plan_list, container, false);
+        ButterKnife.bind(this, view);
+
         expandableListView = (ExpandableListView)view.findViewById(R.id.expandableListView);
 
         loadCollections();
 
-//        if(getArguments() != null){
-//            Food food = getArguments().getParcelable(CHOSEN_FOOD);
-//            Meal meal = listMeals.get(getArguments().getInt(FoodsSearchFragment.MEAL_INDEX));
-//            ArrayList<Food> entry = mapFoods.get(meal);
-//            entry.add(food);
-//            mapFoods.put(meal, entry);
-//        }
-
         expandableListAdapter = new ExpandableAdapter(getActivity(), this, listMeals, mapFoods);
         expandableListView.setAdapter(expandableListAdapter);
 
+        caloriesCounterTextView.setText("Cals:" + currentCaloriesSum() + "/" + mUserManager.getCurrentUser().getCalories());
+        if(currentCaloriesSum() <= mUserManager.getCurrentUser().getCalories()){
+            caloriesCounterTextView.setTextColor(Color.GREEN);
+        }
+
         return view;
+    }
+
+    private int currentCaloriesSum() {
+
+        int caloriesSum = 0;
+
+        for(Meal meal : mUserManager.getCurrentUser().getListMeals()){
+            for(Food food : meal.getFoodList()){
+                caloriesSum += Integer.valueOf(food.getCalories());
+            }
+        }
+
+        return caloriesSum;
     }
 
     private void loadCollections() {

@@ -119,10 +119,14 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 
             holder = new ChildViewHolder();
             holder.foodName = (TextView) convertView.findViewById(R.id.foodNameTextView);
-            holder.calories = (TextView) convertView.findViewById(R.id.caloriesTextView);
-            holder.fat = (TextView) convertView.findViewById(R.id.fatTextView);
-            holder.carbs = (TextView) convertView.findViewById(R.id.carbsTextView);
-            holder.proteins = (TextView) convertView.findViewById(R.id.proteinTextView);
+            holder.caloriesTitle = (TextView) convertView.findViewById(R.id.caloriesTextViewTitle);
+            holder.caloriesInfo = (TextView) convertView.findViewById(R.id.caloriesTextViewInfo);
+            holder.fatTitle = (TextView) convertView.findViewById(R.id.fatTextViewTitle);
+            holder.fatInfo = (TextView) convertView.findViewById(R.id.fatTextViewInfo);
+            holder.carbsTitle = (TextView) convertView.findViewById(R.id.carbsTextViewTitle);
+            holder.carbsInfo = (TextView) convertView.findViewById(R.id.carbsTextViewInfo);
+            holder.proteinsTitle = (TextView) convertView.findViewById(R.id.proteinTextViewTitle);
+            holder.proteinsInfo = (TextView) convertView.findViewById(R.id.proteinTextViewInfo);
 
             convertView.setTag(holder);
         } else {
@@ -132,10 +136,14 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
         final Food food = (Food) getChild(groupPosition, childPosition);
 
         holder.foodName.setText(food.getName());
-        holder.calories.setText(food.getCalories());
-        holder.fat.setText(food.getFat());
-        holder.carbs.setText(food.getCarbo());
-        holder.proteins.setText(food.getProtein());
+        holder.caloriesTitle.setText("per 100g: ");
+        holder.caloriesInfo.setText(food.getCalories() + "kcal");
+        holder.fatTitle.setText("Fat: ");
+        holder.fatInfo.setText(food.getFat() + "g");
+        holder.carbsTitle.setText("Carbo: ");
+        holder.carbsInfo.setText(food.getCarbo() + "g");
+        holder.proteinsTitle.setText("Protein: ");
+        holder.proteinsInfo.setText(food.getProtein() + "g");
         return convertView;
     }
 
@@ -147,10 +155,14 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 
     private static class ChildViewHolder{
         TextView foodName;
-        TextView calories;
-        TextView fat;
-        TextView carbs;
-        TextView proteins;
+        TextView caloriesTitle;
+        TextView caloriesInfo;
+        TextView fatTitle;
+        TextView fatInfo;
+        TextView carbsTitle;
+        TextView carbsInfo;
+        TextView proteinsTitle;
+        TextView proteinsInfo;
     }
 
 }

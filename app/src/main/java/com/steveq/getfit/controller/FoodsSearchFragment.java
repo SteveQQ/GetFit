@@ -19,6 +19,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.steveq.getfit.FatSecretImplementation.FoodGet;
 import com.steveq.getfit.FatSecretImplementation.FoodSearch;
 import com.steveq.getfit.R;
 import com.steveq.getfit.adapters.FoodSearchAdapter;
@@ -30,6 +31,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FoodsSearchFragment extends Fragment {
 
@@ -37,6 +40,7 @@ public class FoodsSearchFragment extends Fragment {
     private TextView emptyTextView;
     private SearchView mSearchView;
     private FoodSearch mFoodSearch;
+    private FoodGet mFoodGet;
     private FoodSearchAdapter adapter;
     public static ArrayList<Food> mFoods;
     public static final String MEAL_INDEX = "meal_index";
@@ -49,6 +53,7 @@ public class FoodsSearchFragment extends Fragment {
 
         mFoods = new ArrayList<>();
         mFoodSearch = new FoodSearch(getActivity());
+        mFoodGet = new FoodGet(getActivity());
         mUserManager = UserManager.getInstance();
 
         View view = inflater.inflate(R.layout.foods_search_list, container, false);
@@ -71,7 +76,18 @@ public class FoodsSearchFragment extends Fragment {
                     bundle.putInt(MEAL_INDEX, getArguments().getInt(MEAL_INDEX));
                     fragment.setArguments(bundle);
 
-                    mUserManager.getCurrentUser().getListMeals().get(getArguments().getInt(MEAL_INDEX)).getFoodList().add(mFoods.get(position));
+                    //mUserManager.getCurrentUser().getListMeals().get(getArguments().getInt(MEAL_INDEX)).getFoodList().add(mFoods.get(position));
+
+                    try {
+                        mFoodGet.foodsGet(mFoods.get(position).getId());
+                        String result = null;
+                        while(result == null) {
+                             result = mFoodGet.getResultJsonString();
+                        }
+                        prepareFoodEntry(result);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     FragmentManager fm = getActivity().getFragmentManager();
                     FragmentTransaction ft = fm.beginTransaction();
@@ -84,6 +100,31 @@ public class FoodsSearchFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void prepareFoodEntry(String result) {
+        JSONObject resultJson = null;
+        try {
+            resultJson = new JSONObject(result);
+            JSONObject food = resultJson.getJSONObject("food");
+            String name = food.getString("food_name");
+            JSONObject servs = food.getJSONObject("servings");
+            JSONArray serving = servs.getJSONArray("serving");
+            JSONObject servObject = serving.getJSONObject(0);
+            String cals = servObject.getString("calories");
+            String carbs = servObject.getString("carbohydrate");
+            String protein = servObject.getString("protein");
+            String fat = servObject.getString("fat");
+            mUserManager.getCurrentUser().
+                    getListMeals().
+                    get(getArguments().getInt(MEAL_INDEX)).
+                    getFoodList().
+                    add(new Food(name, cals,
+                            carbs, protein,
+                            fat));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -130,13 +171,15 @@ public class FoodsSearchFragment extends Fragment {
                 JSONObject foodInst = food.getJSONObject(i);
                 String fullDescription = foodInst.getString("food_description");
                 String[] fragmentedDescription = fullDescription.split("\\|");
-                foodsArrayList.add(i, new Food(
+                Long foodId = Long.valueOf(foodInst.getString("food_id"));
+                Food newFood = new Food(
                         foodInst.getString("food_name"),
                         fragmentedDescription[0],
                         fragmentedDescription[1],
                         fragmentedDescription[2],
-                        fragmentedDescription[3]
-                ));
+                        fragmentedDescription[3]);
+                newFood.setId(foodId);
+                foodsArrayList.add(i, newFood);
             }
         } catch (JSONException e) {
             e.printStackTrace();

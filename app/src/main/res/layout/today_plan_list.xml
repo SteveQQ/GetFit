@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
     <ExpandableListView
         android:id="@+id/expandableListView"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/caloriesCounterTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        tools:text="Cals: 1000/2000"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:textColor="@color/material_red_300_155"/>
 
 </LinearLayout>

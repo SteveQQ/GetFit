@@ -10,6 +10,7 @@ public class Food implements Parcelable{
     private String mCarbo;
     private String mProtein;
     private String mFat;
+    private long mId;
 
     public Food(String name, String calories, String carbo, String protein, String fat) {
         mName = name;
@@ -17,6 +18,14 @@ public class Food implements Parcelable{
         mCarbo = carbo;
         mProtein = protein;
         mFat = fat;
+    }
+
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        mId = id;
     }
 
     public String getName() {
@@ -60,5 +69,17 @@ public class Food implements Parcelable{
         mProtein = in.readString();
         mFat = in.readString();
     }
+
+    public static final Creator<Food> CREATOR = new Creator<Food>() {
+        @Override
+        public Food createFromParcel(Parcel source) {
+            return new Food(source);
+        }
+
+        @Override
+        public Food[] newArray(int size) {
+            return new Food[size];
+        }
+    };
 
 }
