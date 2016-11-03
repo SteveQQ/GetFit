@@ -24,7 +24,6 @@ public class SplashActivity extends Activity {
         mUserManager = UserManager.getInstance(this, mSharedPreferences, mEditor);
         mUserManager.initializeUsersList();
 
-
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();

@@ -17,6 +17,7 @@ import com.steveq.getfit.controller.MainActivity;
 import com.steveq.getfit.controller.TodayPlanFragment;
 import com.steveq.getfit.model.Food;
 import com.steveq.getfit.model.Meal;
+import com.steveq.getfit.model.UserManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,12 +30,14 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
     private Fragment mFragment;
     private List<Meal> mMeals;
     private HashMap<Meal, ArrayList<Food>> mFoods;
+    private UserManager mUserManager;
 
     public ExpandableAdapter(Context context, Fragment fragment, List<Meal> meals, HashMap<Meal, ArrayList<Food>> foods) {
         mContext = context;
         mMeals = meals;
         mFoods = foods;
         mFragment = fragment;
+        mUserManager = UserManager.getInstance();
     }
 
     @Override
@@ -113,8 +116,12 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
         void onItemButtonClick(int index);
     }
 
+    public interface childButtonClickable{
+        void onChildButtonClick(int groupIndex, Food children);
+    }
+
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
         ChildViewHolder holder;
 
@@ -131,6 +138,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
             holder.carbsInfo = (TextView) convertView.findViewById(R.id.carbsTextViewInfo);
             holder.proteinsTitle = (TextView) convertView.findViewById(R.id.proteinTextViewTitle);
             holder.proteinsInfo = (TextView) convertView.findViewById(R.id.proteinTextViewInfo);
+            holder.removeFoodButton = (ImageView) convertView.findViewById(R.id.deleteFoodButton);
 
             convertView.setTag(holder);
         } else {
@@ -148,6 +156,13 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
         holder.carbsInfo.setText(food.getCarbo() + "g");
         holder.proteinsTitle.setText("Protein: ");
         holder.proteinsInfo.setText(food.getProtein() + "g");
+        holder.removeFoodButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((TodayPlanFragment)mFragment).onChildButtonClick(groupPosition, food);
+
+            }
+        });
         return convertView;
     }
 
@@ -168,6 +183,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
         TextView carbsInfo;
         TextView proteinsTitle;
         TextView proteinsInfo;
+        ImageView removeFoodButton;
     }
 
 }

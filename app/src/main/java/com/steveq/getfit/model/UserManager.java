@@ -67,6 +67,7 @@ public class UserManager {
     }
 
     public void setUserName(HashSet<String> input) {
+        mUserNames = new HashSet<>();
         if(input != null) {
             mUserNames.addAll(input);
         }
@@ -130,7 +131,7 @@ public class UserManager {
                 mCurrentUser = loadUser(username);
                 Intent intent = new Intent(mContext, MainActivity.class);
                 mContext.startActivity(intent);
-                Toast.makeText(ctx, "Hello!"+ RandomStringUtils.random(10, mContext.getResources().getString(R.string.alpha_num).toCharArray()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, "Hello!", Toast.LENGTH_SHORT).show();
                 return true;
             } else {
                 Toast.makeText(ctx, "Wrong Password", Toast.LENGTH_SHORT).show();

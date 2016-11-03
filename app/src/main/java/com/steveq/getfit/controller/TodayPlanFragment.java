@@ -26,7 +26,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TodayPlanFragment extends Fragment implements ExpandableAdapter.itemButtonClickable {
+public class TodayPlanFragment extends Fragment implements ExpandableAdapter.itemButtonClickable, ExpandableAdapter.childButtonClickable {
 
     ExpandableAdapter expandableListAdapter;
     ExpandableListView expandableListView;
@@ -89,8 +89,6 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
     public void onItemButtonClick(int index) {
         FoodsSearchFragment fragment = new FoodsSearchFragment();
 
-        Toast.makeText(getActivity(), index + "", Toast.LENGTH_SHORT).show();
-
         Bundle bundle = new Bundle();
         bundle.putInt(FoodsSearchFragment.MEAL_INDEX, index);
         fragment.setArguments(bundle);
@@ -109,5 +107,13 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
     public void onPause() {
         super.onPause();
         mUserManager.saveUser(mUserManager.getCurrentUser().getUserName(), mUserManager.getCurrentUser());
+    }
+
+    @Override
+    public void onChildButtonClick(int groupIndex, Food children) {
+
+        mUserManager.getCurrentUser().getListMeals().get(groupIndex).getFoodList().remove(children);
+        expandableListView.collapseGroup(groupIndex);
+
     }
 }

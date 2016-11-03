@@ -36,6 +36,7 @@ import com.steveq.getfit.BuildConfig;
 import com.steveq.getfit.FatSecretImplementation.FoodSearch;
 import com.steveq.getfit.R;
 import com.steveq.getfit.model.Food;
+import com.steveq.getfit.model.Meal;
 import com.steveq.getfit.model.UserManager;
 
 import org.json.JSONObject;
@@ -44,6 +45,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindArray;
@@ -66,6 +68,7 @@ public class MainActivity extends Activity {
     @BindView(R.id.drawerLayout) DrawerLayout mDrawerLayout;
     @BindView(R.id.drawerListView) ListView mDrawerListView;
     @BindArray(R.array.tabs) String[] titles;
+    private UserManager mUserManager;
 
     private ActionBarDrawerToggle drawerToggle;
     private int currentPosition;
@@ -76,6 +79,20 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        mUserManager = UserManager.getInstance();
+
+        if(mUserManager.getCurrentUser().getTimeStamp() != null){
+            Date timestamp = mUserManager.getCurrentUser().getTimeStamp();
+            Date currentTime = new Date();
+
+            if(currentTime.getDay() > timestamp.getDay() && currentTime.getYear() == timestamp.getYear()){
+                for(Meal meal : mUserManager.getCurrentUser().getListMeals()){
+                    meal.getFoodList().clear();
+                }
+            }
+
+        }
 
         mFragmentManager = getFragmentManager();
 
@@ -104,32 +121,46 @@ public class MainActivity extends Activity {
         getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
-                String fragmentTag = mFragmentManager.getBackStackEntryAt(mFragmentManager.getBackStackEntryCount() - 1).getName();
-                Fragment fragment = mFragmentManager.findFragmentByTag(fragmentTag);
+                if(mFragmentManager.getBackStackEntryCount()-1 >= 0) {
+                    String fragmentTag = mFragmentManager.getBackStackEntryAt(mFragmentManager.getBackStackEntryCount() - 1).getName();
+                    Fragment fragment = mFragmentManager.findFragmentByTag(fragmentTag);
 
-                if(fragment instanceof  TodayPlanFragment){
-                    currentPosition = 0;
+                    if (fragment instanceof TodayPlanFragment) {
+                        currentPosition = 0;
 
+                    }
+                    if (fragment instanceof FoodsSearchFragment) {
+                        currentPosition = 1;
+
+                    }
+                    if (fragment instanceof CaloriesFragment) {
+                        currentPosition = 2;
+
+                    }
+                    if (fragment instanceof AccountFragment) {
+                        currentPosition = 3;
+
+                    }
+
+                    setActionBarTitle(currentPosition);
                 }
-                if(fragment instanceof FoodsSearchFragment){
-                    currentPosition = 1;
-
-                }
-                if(fragment instanceof CaloriesFragment){
-                    currentPosition = 2;
-
-                }
-                if(fragment instanceof AccountFragment){
-                    currentPosition = 3;
-
-                }
-
-                setActionBarTitle(currentPosition);
             }
         });
 
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mUserManager.saveUser(mUserManager.getCurrentUser().getUserName(), mUserManager.getCurrentUser());
     }
 
     @Override
@@ -203,25 +234,21 @@ public class MainActivity extends Activity {
 
         switch(position){
             case 1:
-                fragment = new FoodsSearchFragment();
                 ft.replace(R.id.contentFrame, fragment, TAG_FOOD_SEARCH);
                 ft.addToBackStack(TAG_FOOD_SEARCH);
                 currentPosition = 1;
                 break;
             case 2:
-                fragment = new CaloriesFragment();
                 ft.replace(R.id.contentFrame, fragment, TAG_CALORIES_PREFS);
                 ft.addToBackStack(TAG_CALORIES_PREFS);
                 currentPosition = 2;
                 break;
             case 3:
-                fragment = new AccountFragment();
                 ft.replace(R.id.contentFrame, fragment, TAG_ACCOUNT_MANAGEMENT);
                 ft.addToBackStack(TAG_ACCOUNT_MANAGEMENT);
                 currentPosition = 3;
                 break;
             default:
-                fragment = new TodayPlanFragment();
                 ft.replace(R.id.contentFrame, fragment, TAG_TODAY_PLAN);
                 ft.addToBackStack(TAG_TODAY_PLAN);
                 currentPosition = 0;

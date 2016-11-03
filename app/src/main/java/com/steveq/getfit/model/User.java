@@ -1,6 +1,7 @@
 package com.steveq.getfit.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,12 +14,21 @@ public class User {
     private int mHeight;
     private int mWeight;
     private int mCalories;
+    private Date timeStamp;
 
 
     public User(String userName, String password) {
         mUserName = userName;
         mPassword = password;
         prepareListData();
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Date timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public ArrayList<Meal> getListMeals() {

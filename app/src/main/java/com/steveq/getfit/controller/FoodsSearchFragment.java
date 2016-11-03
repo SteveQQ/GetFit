@@ -31,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,7 +69,6 @@ public class FoodsSearchFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(getArguments() != null){
-                    Toast.makeText(parent.getContext(), position+"", Toast.LENGTH_SHORT).show();
                     TodayPlanFragment fragment = new TodayPlanFragment();
 
                     Bundle bundle = new Bundle();
@@ -85,6 +85,7 @@ public class FoodsSearchFragment extends Fragment {
                              result = mFoodGet.getResultJsonString();
                         }
                         prepareFoodEntry(result);
+                        mUserManager.getCurrentUser().setTimeStamp(new Date());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -123,6 +124,28 @@ public class FoodsSearchFragment extends Fragment {
                             carbs, protein,
                             fat));
         } catch (JSONException e) {
+
+            try {
+                resultJson = new JSONObject(result);
+                JSONObject food = resultJson.getJSONObject("food");
+                String name = food.getString("food_name");
+                JSONObject servs = food.getJSONObject("servings");
+                JSONObject serving = servs.getJSONObject("serving");
+                String cals = serving.getString("calories");
+                String carbs = serving.getString("carbohydrate");
+                String protein = serving.getString("protein");
+                String fat = serving.getString("fat");
+                mUserManager.getCurrentUser().
+                        getListMeals().
+                        get(getArguments().getInt(MEAL_INDEX)).
+                        getFoodList().
+                        add(new Food(name, cals,
+                                carbs, protein,
+                                fat));
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+
             e.printStackTrace();
         }
     }
