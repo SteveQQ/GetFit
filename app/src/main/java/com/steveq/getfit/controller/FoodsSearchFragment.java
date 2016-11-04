@@ -79,7 +79,7 @@ public class FoodsSearchFragment extends Fragment {
                     //mUserManager.getCurrentUser().getListMeals().get(getArguments().getInt(MEAL_INDEX)).getFoodList().add(mFoods.get(position));
 
                     try {
-                        mFoodGet.foodsGet(mFoods.get(position).getId());
+                        mFoodGet.execMethod(mFoodGet.buildRequest(mFoods.get(position).getId()));
                         String result = null;
                         while(result == null) {
                              result = mFoodGet.getResultJsonString();
@@ -165,7 +165,7 @@ public class FoodsSearchFragment extends Fragment {
                 Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
                 String jsonResultString = null;
                 try {
-                    mFoodSearch.foodsSearch(query, 0);
+                    mFoodSearch.execMethod(mFoodSearch.buildRequest(query, 0));
                     while(jsonResultString == null) {
                         jsonResultString = mFoodSearch.getResultJsonString();
                     }

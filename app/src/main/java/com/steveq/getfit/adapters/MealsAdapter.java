@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +47,7 @@ public class MealsAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.expandable_list_item, null);
             holder = new ViewHolder();
             holder.mealNameTextView = (TextView) convertView.findViewById(R.id.mealName);
-            holder.addFoodButton = (Button)convertView.findViewById(R.id.addFoodButton);
+            holder.addFoodButton = (ImageView) convertView.findViewById(R.id.addFoodButton);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder)convertView.getTag();
@@ -67,6 +68,6 @@ public class MealsAdapter extends BaseAdapter {
 
     private static class ViewHolder{
         TextView mealNameTextView;
-        Button addFoodButton;
+        ImageView addFoodButton;
     }
 }

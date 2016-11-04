@@ -36,72 +36,27 @@ import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-public class FoodSearch {
+public class FoodSearch extends FatSecretService{
 
-    //-----CONSTANTS-----//
-    final static private String METHOD = "GET";
-    final static private String URL = "http://platform.fatsecret.com/rest/server.api";
-    private static final String ALGORITHM = "HmacSHA1";
-    //-----CONSTANTS-----//
-
-    private Context mContext;
-    private String resultJsonString;
-    public FoodSearch(Context context){
-        mContext = context;
+    public FoodSearch(Context context) {
+        super(context);
     }
 
-    public void foodsSearch(String query, int page) throws Exception{
-        final String jsonString;
-        if(isNetworkAvailable()){
+    public String buildRequest(Object... inputs){ //Generate parametrized parameters
 
-            OkHttpClient client = new OkHttpClient();
+        String query = (String)inputs[0];
+        Integer pageNumber = (Integer)inputs[1];
 
-            Request request = new Request.Builder()
-                    .url(buildRequest(query, page))
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
-                @Override public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(Call call, okhttp3.Response response) throws IOException {
-
-                    String line;
-                    StringBuilder builder = new StringBuilder();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
-                    while ((line = reader.readLine()) != null) {
-                        Log.d("GETFITres", line);
-                        builder.append(line);
-                    }
-                    Log.d("builder", builder.toString());
-                    resultJsonString = builder.toString();
-                    }
-                }
-            );
-        } else {
-            Toast.makeText(mContext, "Network is unavailable!", Toast.LENGTH_LONG).show();
-        }
-
-
-    }
-
-    public String getResultJsonString() {
-        return resultJsonString;
-    }
-
-    public String buildRequest(String query, int pageNumber) throws Exception { //Generate parametrized parameters
-        ArrayList<String> params = new ArrayList<String>(generateParams());
+        ArrayList<String> params = new ArrayList<>(generateParams(query, pageNumber));
         String[] template = new String[1];
-        params.add("page_number=" + pageNumber);
-        params.add("search_expression=" + percentEncoding(query));
-        params.add("oauth_signature=" + sign(buildSignatureBaseString(params)));
         Collections.sort(params);
         return URL + "?" + join(params.toArray(template), "&");
     }
 
-    private ArrayList<String> generateParams() { //Generate not parametrized parameters
+    public ArrayList<String> generateParams(Object... inputs) { //Generate not parametrized parameters
+
+        String query = (String)inputs[0];
+        Integer pageNumber = (Integer)inputs[1];
 
         ArrayList<String> params = new ArrayList<>();
         params.add("oauth_consumer_key=" + BuildConfig.API_KEY);
@@ -112,70 +67,13 @@ public class FoodSearch {
         params.add("format=json");
         params.add("method=foods.search");
         params.add("max_results=10");
+        params.add("page_number=" + pageNumber);
+        params.add("search_expression=" + percentEncoding(query));
+        try {
+            params.add("oauth_signature=" + sign(buildSignatureBaseString(params)));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return params;
     }
-
-    public String buildSignatureBaseString(ArrayList<String> params){
-
-        ArrayList<String> p = new ArrayList<>(params);
-        Collections.sort(p);
-        String[] template = new String[1];
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(METHOD);
-        builder.append("&");
-        builder.append(percentEncoding(URL));
-        builder.append("&");
-        builder.append(percentEncoding(join(p.toArray(template), "&")));
-
-        return builder.toString();
-    }
-
-    private static String sign(String sbs) throws UnsupportedEncodingException {
-
-        String key = BuildConfig.SS + "&";
-        SecretKey sk = new SecretKeySpec(key.getBytes(), ALGORITHM);
-        String sign = "";
-        try {
-            Mac m = Mac.getInstance(ALGORITHM);
-            m.init(sk);
-            sign = percentEncoding(new String(Base64.encode(m.doFinal(sbs.getBytes()), Base64.DEFAULT)).trim());
-        } catch (NoSuchAlgorithmException e) {
-        } catch (InvalidKeyException e) {
-        }
-        return sign;
-    }
-
-    //----- Helper Functions -----//
-
-    public static String percentEncoding(String s){
-        return Uri.encode(s, "-,.,_,~");
-    }
-
-    private static String join(String[] array, String separator) {
-        StringBuilder b = new StringBuilder();
-        for (int i = 0; i < array.length; i++) {
-            if (i > 0)
-                b.append(separator);
-            b.append(array[i]);
-        }
-        return b.toString();
-    }
-
-    private String getNonce() {
-        return RandomStringUtils.random(32, mContext.getResources().getString(R.string.alpha_num).toCharArray());
-    }
-
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        boolean isAvailable = false;
-        if(networkInfo != null && networkInfo.isConnected()){
-            isAvailable = true;
-        }
-        return isAvailable;
-    }
-
-    //----- Helper Functions -----//
 }
