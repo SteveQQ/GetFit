@@ -7,14 +7,27 @@
     <ListView
         android:id="@+id/foodsSearchListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
 
     <TextView
         android:id="@android:id/empty"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:gravity="center"
         android:text="No data to present, search something..."
         android:textSize="24sp"/>
+
+    <EditText
+        android:id="@+id/quantityEditText"
+        android:inputType="numberDecimal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Quantity...[g]"
+
+        android:textSize="24sp"
+        android:textColorHint="@color/material_red_300_155"/>
 
 </LinearLayout>

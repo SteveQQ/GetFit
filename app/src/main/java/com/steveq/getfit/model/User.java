@@ -1,6 +1,7 @@
 package com.steveq.getfit.model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,7 @@ public class User {
     private int mHeight;
     private int mWeight;
     private int mCalories;
-    private Date timeStamp;
+    private Calendar timeStamp;
 
 
     public User(String userName, String password) {
@@ -23,11 +24,11 @@ public class User {
         prepareListData();
     }
 
-    public Date getTimeStamp() {
+    public Calendar getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(Date timeStamp) {
+    public void setTimeStamp(Calendar timeStamp) {
         this.timeStamp = timeStamp;
     }
 

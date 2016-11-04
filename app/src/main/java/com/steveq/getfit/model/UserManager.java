@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -44,14 +46,20 @@ public class UserManager {
     }
 
     public User getCurrentUser() {
-        return mCurrentUser;
+        if(mCurrentUser != null) {
+            return mCurrentUser;
+        } else {
+            return new User("", "");
+        }
     }
 
     public static UserManager getInstance(Context ctx, SharedPreferences sharedPreferences, SharedPreferences.Editor editor){
         if(instance == null){
             instance = new UserManager(ctx, sharedPreferences, editor);
+            return instance;
+        } else {
+            return instance;
         }
-        return instance;
     }
 
     public static UserManager getInstance(){
@@ -208,6 +216,7 @@ public class UserManager {
         return gson.fromJson(jsonUser, User.class);
     }
 
+    @Nullable
     public boolean saveUser(String username, User user){
 
         String jsonUser = gson.toJson(user);

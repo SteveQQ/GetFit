@@ -11,7 +11,6 @@ import com.steveq.getfit.model.UserManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.OkHttpClient;
 
 public class LoginActivity extends Activity {
 
@@ -19,7 +18,6 @@ public class LoginActivity extends Activity {
     @BindView(R.id.passwordEditText) EditText mPasswordEditText;
     @BindView(R.id.loginButton) Button mLoginButton;
     @BindView(R.id.createNewUserButton) Button mCreateNewUserButton;
-    UserManager mUserManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +26,12 @@ public class LoginActivity extends Activity {
         View view = this.getLayoutInflater().inflate(R.layout.login_activity, null, false);
         view.setOnClickListener(new DismissKeybord(this));
         setContentView(view);
-        //setContentView(R.layout.login_activity);
-
-        mUserManager = UserManager.getInstance();
         ButterKnife.bind(this);
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              if(!mUserManager.logIn(LoginActivity.this, mUsernameEditText.getText().toString(), mPasswordEditText.getText().toString())){
+              if(!UserManager.getInstance().logIn(LoginActivity.this, mUsernameEditText.getText().toString(), mPasswordEditText.getText().toString())){
                   mCreateNewUserButton.setVisibility(View.VISIBLE);
               }
             }
@@ -45,12 +40,18 @@ public class LoginActivity extends Activity {
         mCreateNewUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mUserManager.createNewUser(LoginActivity.this, mUsernameEditText.getText().toString(), mPasswordEditText.getText().toString());
-                mUserManager.logIn(LoginActivity.this, mUsernameEditText.getText().toString(), mPasswordEditText.getText().toString());
-                mUsernameEditText.setText("");
-                mPasswordEditText.setText("");
+                UserManager.getInstance().createNewUser(LoginActivity.this, mUsernameEditText.getText().toString(), mPasswordEditText.getText().toString());
+
+                UserManager.getInstance().logIn(LoginActivity.this, mUsernameEditText.getText().toString(), mPasswordEditText.getText().toString());
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mUsernameEditText.setText("");
+        mPasswordEditText.setText("");
     }
 
     @Override

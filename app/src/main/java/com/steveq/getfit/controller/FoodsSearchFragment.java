@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -31,22 +32,26 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Calendar;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class FoodsSearchFragment extends Fragment {
 
-    private ListView mListView;
-    private TextView emptyTextView;
+    @BindView(R.id.foodsSearchListView) ListView mListView;
+    @BindView(android.R.id.empty) TextView emptyTextView;
+    @BindView(R.id.quantityEditText) EditText quantityEditText;
     private SearchView mSearchView;
     private FoodSearch mFoodSearch;
     private FoodGet mFoodGet;
     private FoodSearchAdapter adapter;
     public static ArrayList<Food> mFoods;
     public static final String MEAL_INDEX = "meal_index";
+    private static final String QUANTITY = "quantity";
     public static final String FOOD_SEARCH = "food_search";
     UserManager mUserManager;
+
 
     @Nullable
     @Override
@@ -58,12 +63,12 @@ public class FoodsSearchFragment extends Fragment {
         mUserManager = UserManager.getInstance();
 
         View view = inflater.inflate(R.layout.foods_search_list, container, false);
-        mListView = (ListView) view.findViewById(R.id.foodsSearchListView);
-        emptyTextView = (TextView) view.findViewById(android.R.id.empty);
         setHasOptionsMenu(true);
-        mListView.setEmptyView(emptyTextView);
+        ButterKnife.bind(this, view);
+
         adapter = new FoodSearchAdapter(getActivity());
         mListView.setAdapter(adapter);
+        mListView.setEmptyView(emptyTextView);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -76,8 +81,6 @@ public class FoodsSearchFragment extends Fragment {
                     bundle.putInt(MEAL_INDEX, getArguments().getInt(MEAL_INDEX));
                     fragment.setArguments(bundle);
 
-                    //mUserManager.getCurrentUser().getListMeals().get(getArguments().getInt(MEAL_INDEX)).getFoodList().add(mFoods.get(position));
-
                     try {
                         mFoodGet.execMethod(mFoodGet.buildRequest(mFoods.get(position).getId()));
                         String result = null;
@@ -85,7 +88,7 @@ public class FoodsSearchFragment extends Fragment {
                              result = mFoodGet.getResultJsonString();
                         }
                         prepareFoodEntry(result);
-                        mUserManager.getCurrentUser().setTimeStamp(new Date());
+                        mUserManager.getCurrentUser().setTimeStamp(Calendar.getInstance());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -105,43 +108,59 @@ public class FoodsSearchFragment extends Fragment {
 
     private void prepareFoodEntry(String result) {
         JSONObject resultJson = null;
+        int factor;
         try {
+            if(quantityEditText.getText().toString().equals("")){
+                factor = 100;
+            } else {
+                factor = Integer.valueOf(quantityEditText.getText().toString());
+            }
             resultJson = new JSONObject(result);
             JSONObject food = resultJson.getJSONObject("food");
             String name = food.getString("food_name");
             JSONObject servs = food.getJSONObject("servings");
             JSONArray serving = servs.getJSONArray("serving");
             JSONObject servObject = serving.getJSONObject(0);
-            String cals = servObject.getString("calories");
-            String carbs = servObject.getString("carbohydrate");
-            String protein = servObject.getString("protein");
-            String fat = servObject.getString("fat");
+            Integer cals = Integer.valueOf(servObject.getString("calories")) * factor/100;
+            Double carbs = Double.valueOf(servObject.getString("carbohydrate")) * factor/100;
+            Double protein = Double.valueOf(servObject.getString("protein")) * factor/100;
+            Double fat = Double.valueOf(servObject.getString("fat")) * factor/100;
+            Food newFoodEntry = new Food(name, String.valueOf(cals),
+                    String.valueOf(carbs), String.valueOf(protein),
+                    String.valueOf(fat));
+            newFoodEntry.setQuantity(factor);
             mUserManager.getCurrentUser().
                     getListMeals().
                     get(getArguments().getInt(MEAL_INDEX)).
                     getFoodList().
-                    add(new Food(name, cals,
-                            carbs, protein,
-                            fat));
+                    add(newFoodEntry);
         } catch (JSONException e) {
 
             try {
+                if(quantityEditText.getText().toString().equals("")){
+                    factor = 100;
+                } else {
+                    factor = Integer.valueOf(quantityEditText.getText().toString());
+                }
                 resultJson = new JSONObject(result);
                 JSONObject food = resultJson.getJSONObject("food");
                 String name = food.getString("food_name");
                 JSONObject servs = food.getJSONObject("servings");
                 JSONObject serving = servs.getJSONObject("serving");
-                String cals = serving.getString("calories");
-                String carbs = serving.getString("carbohydrate");
-                String protein = serving.getString("protein");
-                String fat = serving.getString("fat");
+                Integer cals = Integer.valueOf(serving.getString("calories")) * factor/100;
+                Double carbs = Double.valueOf(serving.getString("carbohydrate")) * factor/100;
+                Double protein = Double.valueOf(serving.getString("protein")) * factor/100;
+                Double fat = Double.valueOf(serving.getString("fat")) * factor/100;
+                Food newFoodEntry = new Food(name, String.valueOf(cals),
+                        String.valueOf(carbs), String.valueOf(protein),
+                        String.valueOf(fat));
+                newFoodEntry.setQuantity(Integer.valueOf(quantityEditText.getText().toString()));
                 mUserManager.getCurrentUser().
                         getListMeals().
                         get(getArguments().getInt(MEAL_INDEX)).
                         getFoodList().
-                        add(new Food(name, cals,
-                                carbs, protein,
-                                fat));
+                        add(newFoodEntry);
+
             } catch (JSONException e1) {
                 e1.printStackTrace();
             }
@@ -162,7 +181,6 @@ public class FoodsSearchFragment extends Fragment {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
                 String jsonResultString = null;
                 try {
                     mFoodSearch.execMethod(mFoodSearch.buildRequest(query, 0));
@@ -173,6 +191,7 @@ public class FoodsSearchFragment extends Fragment {
                     e.printStackTrace();
                 }
                 prepareFoodsData(jsonResultString);
+                mFoodSearch.setResultJsonString(null);
                 return true;
             }
 
@@ -190,7 +209,7 @@ public class FoodsSearchFragment extends Fragment {
             resultJson = new JSONObject(resultJsonString);
             JSONObject foods = resultJson.getJSONObject("foods");
             JSONArray food = foods.getJSONArray("food");
-            for(int i=0; i < food.length(); i++){
+            for (int i = 0; i < food.length(); i++) {
                 JSONObject foodInst = food.getJSONObject(i);
                 String fullDescription = foodInst.getString("food_description");
                 String[] fragmentedDescription = fullDescription.split("\\|");
@@ -204,6 +223,7 @@ public class FoodsSearchFragment extends Fragment {
                 newFood.setId(foodId);
                 foodsArrayList.add(i, newFood);
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -211,6 +231,7 @@ public class FoodsSearchFragment extends Fragment {
         mFoods = foodsArrayList;
         adapter.notifyDataSetChanged();
         mSearchView.clearFocus();
+
     }
 
 }

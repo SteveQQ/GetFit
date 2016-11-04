@@ -16,6 +16,7 @@ import com.steveq.getfit.R;
 import com.steveq.getfit.adapters.ExpandableAdapter;
 import com.steveq.getfit.model.Food;
 import com.steveq.getfit.model.Meal;
+import com.steveq.getfit.model.User;
 import com.steveq.getfit.model.UserManager;
 
 import java.util.ArrayList;
@@ -28,14 +29,17 @@ import butterknife.ButterKnife;
 
 public class TodayPlanFragment extends Fragment implements ExpandableAdapter.itemButtonClickable, ExpandableAdapter.childButtonClickable {
 
+    @BindView(R.id.caloriesCounterTextView) TextView caloriesCounterTextView;
+
     ExpandableAdapter expandableListAdapter;
     ExpandableListView expandableListView;
     ArrayList<Meal> listMeals;
     HashMap<Meal, ArrayList<Food>> mapFoods;
+
     public static final String CHOSEN_FOOD = "chosen_food";
     public static final String TODAY_PLAN = "today_plan";
-    private UserManager mUserManager;
-    @BindView(R.id.caloriesCounterTextView) TextView caloriesCounterTextView;
+
+    private User currentUser;
 
     public TodayPlanFragment() {
         // Required empty public constructor
@@ -44,7 +48,8 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mUserManager = UserManager.getInstance();
+
+        currentUser = UserManager.getInstance().getCurrentUser();
 
         View view =  inflater.inflate(R.layout.today_plan_list, container, false);
         ButterKnife.bind(this, view);
@@ -56,8 +61,8 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
         expandableListAdapter = new ExpandableAdapter(getActivity(), this, listMeals, mapFoods);
         expandableListView.setAdapter(expandableListAdapter);
 
-        caloriesCounterTextView.setText("Cals:" + currentCaloriesSum() + "/" + mUserManager.getCurrentUser().getCalories());
-        if(currentCaloriesSum() <= mUserManager.getCurrentUser().getCalories()){
+        caloriesCounterTextView.setText("Cals:" + currentCaloriesSum() + "/" + UserManager.getInstance().getCurrentUser().getCalories());
+        if(currentCaloriesSum() <= UserManager.getInstance().getCurrentUser().getCalories()){
             caloriesCounterTextView.setTextColor(Color.GREEN);
         }
 
@@ -68,7 +73,7 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
 
         int caloriesSum = 0;
 
-        for(Meal meal : mUserManager.getCurrentUser().getListMeals()){
+        for(Meal meal : currentUser.getListMeals()){
             for(Food food : meal.getFoodList()){
                 caloriesSum += Integer.valueOf(food.getCalories());
             }
@@ -78,9 +83,9 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
     }
 
     private void loadCollections() {
-        listMeals = mUserManager.getCurrentUser().getListMeals();
+        listMeals = currentUser.getListMeals();
         mapFoods = new HashMap<>();
-        for(Meal meal : mUserManager.getCurrentUser().getListMeals()){
+        for(Meal meal : currentUser.getListMeals()){
             mapFoods.put(meal, meal.getFoodList());
         }
     }
@@ -94,25 +99,18 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
         fragment.setArguments(bundle);
 
         ((MainActivity)getActivity()).selectFragment(1, fragment);
-
-//        FragmentTransaction ft = getFragmentManager().beginTransaction();
-//        ft.replace(R.id.contentFrame, fragment, FoodsSearchFragment.FOOD_SEARCH);
-//        ft.addToBackStack(null);
-//        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//        ft.commit();
-//        ((MainActivity)getActivity()).setActionBarTitle(1);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mUserManager.saveUser(mUserManager.getCurrentUser().getUserName(), mUserManager.getCurrentUser());
+        UserManager.getInstance().saveUser(currentUser.getUserName(), currentUser);
     }
 
     @Override
     public void onChildButtonClick(int groupIndex, Food children) {
 
-        mUserManager.getCurrentUser().getListMeals().get(groupIndex).getFoodList().remove(children);
+        currentUser.getListMeals().get(groupIndex).getFoodList().remove(children);
         expandableListView.collapseGroup(groupIndex);
 
     }

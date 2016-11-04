@@ -10,6 +10,7 @@
         <item>Search Food</item>
         <item>Preferences</item>
         <item>Account</item>
+        <item>Log Out</item>
     </string-array>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -86,6 +86,10 @@ public abstract class FatSecretService {
         return resultJsonString;
     }
 
+    public void setResultJsonString(String resultJsonString) {
+        this.resultJsonString = resultJsonString;
+    }
+
     protected abstract ArrayList<String> generateParams(Object... inputs);
 
     protected abstract String buildRequest(Object... inputs);

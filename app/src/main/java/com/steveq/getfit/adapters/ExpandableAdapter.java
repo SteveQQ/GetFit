@@ -148,7 +148,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
         final Food food = (Food) getChild(groupPosition, childPosition);
 
         holder.foodName.setText(food.getName());
-        holder.caloriesTitle.setText("per 100g: ");
+        holder.caloriesTitle.setText("per " + food.getQuantity() + " g");
         holder.caloriesInfo.setText(food.getCalories() + "kcal");
         holder.fatTitle.setText("Fat: ");
         holder.fatInfo.setText(food.getFat() + "g");

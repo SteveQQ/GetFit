@@ -37,6 +37,7 @@ import com.steveq.getfit.FatSecretImplementation.FoodSearch;
 import com.steveq.getfit.R;
 import com.steveq.getfit.model.Food;
 import com.steveq.getfit.model.Meal;
+import com.steveq.getfit.model.User;
 import com.steveq.getfit.model.UserManager;
 
 import org.json.JSONObject;
@@ -45,6 +46,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -60,19 +62,20 @@ import okhttp3.Request;
 public class MainActivity extends Activity {
 
 
+    @BindView(R.id.drawerLayout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.drawerListView) ListView mDrawerListView;
+    @BindArray(R.array.tabs) String[] titles;
+
     private static final String TAG_FOOD_SEARCH = "tag_food_search";
     private static final String TAG_ACCOUNT_MANAGEMENT = "account_management";
     private static final String TAG_TODAY_PLAN = "today_plan";
     private static final String TAG_CALORIES_PREFS = "calories_prefs";
+
     private FragmentManager mFragmentManager;
-    @BindView(R.id.drawerLayout) DrawerLayout mDrawerLayout;
-    @BindView(R.id.drawerListView) ListView mDrawerListView;
-    @BindArray(R.array.tabs) String[] titles;
-    private UserManager mUserManager;
 
     private ActionBarDrawerToggle drawerToggle;
     private int currentPosition;
-
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,14 +83,15 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mUserManager = UserManager.getInstance();
+        currentUser = UserManager.getInstance().getCurrentUser();
 
-        if(mUserManager.getCurrentUser().getTimeStamp() != null){
-            Date timestamp = mUserManager.getCurrentUser().getTimeStamp();
-            Date currentTime = new Date();
+        if(currentUser.getTimeStamp() != null){
+            Calendar timestamp = currentUser.getTimeStamp();
+            Calendar currentTime = Calendar.getInstance();
 
-            if(currentTime.getDay() > timestamp.getDay() && currentTime.getYear() == timestamp.getYear()){
-                for(Meal meal : mUserManager.getCurrentUser().getListMeals()){
+            if(currentTime.get(Calendar.DAY_OF_YEAR) > timestamp.get(Calendar.DAY_OF_YEAR) && currentTime.get(Calendar.YEAR) == timestamp.get(Calendar.YEAR) ||
+                    currentTime.get(Calendar.DAY_OF_YEAR) < timestamp.get(Calendar.DAY_OF_YEAR) && currentTime.get(Calendar.YEAR) > timestamp.get(Calendar.YEAR)){
+                for(Meal meal : currentUser.getListMeals()){
                     meal.getFoodList().clear();
                 }
             }
@@ -154,13 +158,12 @@ public class MainActivity extends Activity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mUserManager.saveUser(mUserManager.getCurrentUser().getUserName(), mUserManager.getCurrentUser());
+        UserManager.getInstance().saveUser(currentUser.getUserName(), currentUser);
     }
 
     @Override
@@ -173,8 +176,11 @@ public class MainActivity extends Activity {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectFragment(position);
-            Toast.makeText(MainActivity.this, position+"", Toast.LENGTH_SHORT).show();
+            if(position < 4) {
+                selectFragment(position);
+            } else {
+                finish();
+            }
         }
     }
 
