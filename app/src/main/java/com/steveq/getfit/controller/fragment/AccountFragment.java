@@ -1,4 +1,4 @@
-package com.steveq.getfit.controller;
+package com.steveq.getfit.controller.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;

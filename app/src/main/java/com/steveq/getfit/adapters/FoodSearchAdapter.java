@@ -6,14 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.steveq.getfit.R;
-import com.steveq.getfit.controller.FoodsSearchFragment;
+import com.steveq.getfit.controller.fragment.FoodsSearchFragment;
 import com.steveq.getfit.model.Food;
-import com.steveq.getfit.model.Meal;
-
-import java.util.ArrayList;
 
 public class FoodSearchAdapter extends BaseAdapter {
 

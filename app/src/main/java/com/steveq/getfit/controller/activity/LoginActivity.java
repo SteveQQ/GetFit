@@ -1,4 +1,4 @@
-package com.steveq.getfit.controller;
+package com.steveq.getfit.controller.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.steveq.getfit.R;
+import com.steveq.getfit.controller.DismissKeybord;
 import com.steveq.getfit.model.UserManager;
 
 import butterknife.BindView;

@@ -1,4 +1,4 @@
-package com.steveq.getfit.controller;
+package com.steveq.getfit.controller.activity;
 
 import android.app.Activity;
 import android.content.Intent;

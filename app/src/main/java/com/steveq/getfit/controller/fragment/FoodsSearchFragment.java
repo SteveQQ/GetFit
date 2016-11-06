@@ -1,5 +1,6 @@
-package com.steveq.getfit.controller;
+package com.steveq.getfit.controller.fragment;
 
+import android.accounts.NetworkErrorException;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -7,7 +8,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.steveq.getfit.FatSecretImplementation.FoodGet;
 import com.steveq.getfit.FatSecretImplementation.FoodSearch;
@@ -126,8 +125,8 @@ public class FoodsSearchFragment extends Fragment {
             Double protein = Double.valueOf(servObject.getString("protein")) * factor/100;
             Double fat = Double.valueOf(servObject.getString("fat")) * factor/100;
             Food newFoodEntry = new Food(name, String.valueOf(cals),
-                    String.valueOf(carbs), String.valueOf(protein),
-                    String.valueOf(fat));
+                    String.valueOf(Math.round(carbs)), String.valueOf(Math.round(protein)),
+                    String.valueOf(Math.round(fat)));
             newFoodEntry.setQuantity(factor);
             mUserManager.getCurrentUser().
                     getListMeals().
@@ -152,8 +151,8 @@ public class FoodsSearchFragment extends Fragment {
                 Double protein = Double.valueOf(serving.getString("protein")) * factor/100;
                 Double fat = Double.valueOf(serving.getString("fat")) * factor/100;
                 Food newFoodEntry = new Food(name, String.valueOf(cals),
-                        String.valueOf(carbs), String.valueOf(protein),
-                        String.valueOf(fat));
+                        String.valueOf(Math.round(carbs)), String.valueOf(Math.round(protein)),
+                        String.valueOf(Math.round(fat)));
                 newFoodEntry.setQuantity(Integer.valueOf(quantityEditText.getText().toString()));
                 mUserManager.getCurrentUser().
                         getListMeals().
@@ -182,16 +181,16 @@ public class FoodsSearchFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 String jsonResultString = null;
-                try {
-                    mFoodSearch.execMethod(mFoodSearch.buildRequest(query, 0));
-                    while(jsonResultString == null) {
-                        jsonResultString = mFoodSearch.getResultJsonString();
+                    try {
+                        mFoodSearch.execMethod(mFoodSearch.buildRequest(query, 0));
+                        while (jsonResultString == null) {
+                            jsonResultString = mFoodSearch.getResultJsonString();
+                        }
+                        prepareFoodsData(jsonResultString);
+                        mFoodSearch.setResultJsonString(null);
+                    } catch (NetworkErrorException nee){
+                        nee.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                prepareFoodsData(jsonResultString);
-                mFoodSearch.setResultJsonString(null);
                 return true;
             }
 

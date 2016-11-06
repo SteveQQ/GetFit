@@ -1,25 +1,15 @@
 package com.steveq.getfit.model;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.steveq.getfit.BuildConfig;
-import com.steveq.getfit.R;
-import com.steveq.getfit.controller.LoginActivity;
-import com.steveq.getfit.controller.MainActivity;
+import com.steveq.getfit.controller.activity.LoginActivity;
+import com.steveq.getfit.controller.activity.MainActivity;
 
-import org.apache.commons.lang.RandomStringUtils;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;

@@ -2,19 +2,15 @@ package com.steveq.getfit.adapters;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.steveq.getfit.R;
-import com.steveq.getfit.controller.MainActivity;
-import com.steveq.getfit.controller.TodayPlanFragment;
+import com.steveq.getfit.controller.fragment.TodayPlanFragment;
 import com.steveq.getfit.model.Food;
 import com.steveq.getfit.model.Meal;
 import com.steveq.getfit.model.UserManager;
@@ -22,7 +18,6 @@ import com.steveq.getfit.model.UserManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ExpandableAdapter extends BaseExpandableListAdapter {
 
@@ -91,7 +86,6 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
             holder = new ParentViewHolder();
             holder.mealNameTextView = (TextView) convertView.findViewById(R.id.mealName);
             holder.addFoodButton = (ImageView)convertView.findViewById(R.id.addFoodButton);
-            //holder.addFoodButton = (Button)convertView.findViewById(R.id.addFoodButton);
             convertView.setTag(holder);
         } else {
             holder = (ParentViewHolder)convertView.getTag();

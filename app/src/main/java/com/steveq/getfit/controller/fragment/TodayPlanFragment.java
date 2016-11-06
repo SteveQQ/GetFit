@@ -1,8 +1,7 @@
-package com.steveq.getfit.controller;
+package com.steveq.getfit.controller.fragment;
 
 
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.steveq.getfit.R;
 import com.steveq.getfit.adapters.ExpandableAdapter;
+import com.steveq.getfit.controller.activity.MainActivity;
 import com.steveq.getfit.model.Food;
 import com.steveq.getfit.model.Meal;
 import com.steveq.getfit.model.User;
@@ -21,8 +20,6 @@ import com.steveq.getfit.model.UserManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -1,63 +1,34 @@
-package com.steveq.getfit.controller;
+package com.steveq.getfit.controller.activity;
 
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.SearchManager;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.Toast;
-
-import com.fatsecret.platform.model.CompactFood;
-import com.fatsecret.platform.model.CompactRecipe;
-import com.fatsecret.platform.services.FoodService;
-import com.fatsecret.platform.services.RecipeService;
-import com.fatsecret.platform.services.RequestBuilder;
-import com.fatsecret.platform.services.Response;
-import com.steveq.getfit.BuildConfig;
-import com.steveq.getfit.FatSecretImplementation.FoodSearch;
 import com.steveq.getfit.R;
-import com.steveq.getfit.model.Food;
+
+import com.steveq.getfit.controller.fragment.AccountFragment;
+import com.steveq.getfit.controller.fragment.CaloriesFragment;
+import com.steveq.getfit.controller.fragment.FoodsSearchFragment;
+import com.steveq.getfit.controller.fragment.TodayPlanFragment;
 import com.steveq.getfit.model.Meal;
 import com.steveq.getfit.model.User;
 import com.steveq.getfit.model.UserManager;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Headers;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 
 public class MainActivity extends Activity {
 
@@ -157,7 +128,9 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if(mFragmentManager.getBackStackEntryCount() - 1 > 0) {
+            super.onBackPressed();
+        }
     }
 
     @Override

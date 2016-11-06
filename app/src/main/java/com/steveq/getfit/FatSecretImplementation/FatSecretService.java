@@ -1,5 +1,6 @@
 package com.steveq.getfit.FatSecretImplementation;
 
+import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -45,7 +46,7 @@ public abstract class FatSecretService {
         mContext = context;
     }
 
-    public void execMethod(String resquest) throws Exception{
+    public void execMethod(String resquest) throws NetworkErrorException{
         final String jsonString;
         if(isNetworkAvailable()){
 
@@ -77,6 +78,7 @@ public abstract class FatSecretService {
             );
         } else {
             Toast.makeText(mContext, "Network is unavailable!", Toast.LENGTH_LONG).show();
+            throw new NetworkErrorException();
         }
 
 
@@ -144,7 +146,7 @@ public abstract class FatSecretService {
     }
 
 
-    private boolean isNetworkAvailable() {
+    public boolean isNetworkAvailable() {
         ConnectivityManager manager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = manager.getActiveNetworkInfo();
         boolean isAvailable = false;
