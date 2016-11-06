@@ -5,6 +5,8 @@ It will allow users to calculate calories for meals and keep track of meals hist
 
 Full list of features in v1.0 :
 
+* REST API with oAuth 1.0 used to retrieve data,
+* Network communication with http,
 * Splash screen on application start,
 * Drawer Layout to navigation,
 * Fragments for presenting views,
