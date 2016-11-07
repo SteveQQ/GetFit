@@ -74,14 +74,12 @@ public class UserManager {
     //******GETTERS SETTERS******//
 
     //******USERS SERVICES*****//
-    public void changePassword(Context ctx, String password, String newPassword){
-        if(     validate(password)              &&
+    public void changePassword(Context ctx, String oldPassword, String newPassword){
+        if(     validate(oldPassword)              &&
                 validate(newPassword)           &&
-                newPassword.equals(password)){
-            if(!passwordMatches(mCurrentUser, password)) {
-                User user = loadUser(mCurrentUser.getUserName());
-                user.setPassword(newPassword);
-                saveUser(mCurrentUser.getUserName(), user);
+                passwordMatches(mCurrentUser, oldPassword)){
+            if(!newPassword.equals(oldPassword)) {
+                mCurrentUser.setPassword(newPassword);
                 Toast.makeText(ctx, "Password Changed", Toast.LENGTH_LONG).show();
                 logOut(ctx);
             } else {

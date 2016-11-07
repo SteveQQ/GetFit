@@ -10,7 +10,7 @@ public class Food implements Parcelable{
     private String mCarbo;
     private String mProtein;
     private String mFat;
-    private int mQuantity;
+    private double mQuantity;
     private long mId;
 
     public Food(String name, String calories, String carbo, String protein, String fat) {
@@ -21,11 +21,11 @@ public class Food implements Parcelable{
         mFat = fat;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return mQuantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         mQuantity = quantity;
     }
 

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.steveq.getfit.R;
+import com.steveq.getfit.controller.DismissKeybord;
 import com.steveq.getfit.model.UserManager;
 
 import butterknife.BindView;
@@ -30,6 +31,7 @@ public class AccountFragment extends Fragment {
 
 
         View view = inflater.inflate(R.layout.account_list, container, false);
+        view.setOnClickListener(new DismissKeybord(getActivity()));
         ButterKnife.bind(this, view);
 
         changeLoginButton.setOnClickListener(new View.OnClickListener() {

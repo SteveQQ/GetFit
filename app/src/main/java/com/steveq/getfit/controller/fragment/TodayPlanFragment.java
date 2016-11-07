@@ -4,6 +4,7 @@ package com.steveq.getfit.controller.fragment;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,10 +59,7 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
         expandableListAdapter = new ExpandableAdapter(getActivity(), this, listMeals, mapFoods);
         expandableListView.setAdapter(expandableListAdapter);
 
-        caloriesCounterTextView.setText("Cals:" + currentCaloriesSum() + "/" + UserManager.getInstance().getCurrentUser().getCalories());
-        if(currentCaloriesSum() <= UserManager.getInstance().getCurrentUser().getCalories()){
-            caloriesCounterTextView.setTextColor(Color.GREEN);
-        }
+        currentCaloriesSum();
 
         return view;
     }
@@ -70,10 +68,17 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
 
         int caloriesSum = 0;
 
-        for(Meal meal : currentUser.getListMeals()){
-            for(Food food : meal.getFoodList()){
+        for (Meal meal : currentUser.getListMeals()) {
+            for (Food food : meal.getFoodList()) {
                 caloriesSum += Integer.valueOf(food.getCalories());
             }
+        }
+
+        caloriesCounterTextView.setText("Cals:" + caloriesSum + "/" + UserManager.getInstance().getCurrentUser().getCalories());
+        if(caloriesSum <= UserManager.getInstance().getCurrentUser().getCalories()){
+            caloriesCounterTextView.setTextColor(Color.GREEN);
+        } else {
+            caloriesCounterTextView.setTextColor(ContextCompat.getColor(getActivity(), R.color.material_red_300_155));
         }
 
         return caloriesSum;
@@ -109,6 +114,7 @@ public class TodayPlanFragment extends Fragment implements ExpandableAdapter.ite
 
         currentUser.getListMeals().get(groupIndex).getFoodList().remove(children);
         expandableListView.collapseGroup(groupIndex);
+        currentCaloriesSum();
 
     }
 }

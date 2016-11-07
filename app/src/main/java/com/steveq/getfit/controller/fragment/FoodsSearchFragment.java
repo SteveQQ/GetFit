@@ -23,6 +23,7 @@ import com.steveq.getfit.FatSecretImplementation.FoodGet;
 import com.steveq.getfit.FatSecretImplementation.FoodSearch;
 import com.steveq.getfit.R;
 import com.steveq.getfit.adapters.FoodSearchAdapter;
+import com.steveq.getfit.controller.DismissKeybord;
 import com.steveq.getfit.model.Food;
 import com.steveq.getfit.model.UserManager;
 
@@ -62,6 +63,7 @@ public class FoodsSearchFragment extends Fragment {
         mUserManager = UserManager.getInstance();
 
         View view = inflater.inflate(R.layout.foods_search_list, container, false);
+        view.setOnClickListener(new DismissKeybord(getActivity()));
         setHasOptionsMenu(true);
         ButterKnife.bind(this, view);
 
@@ -107,12 +109,12 @@ public class FoodsSearchFragment extends Fragment {
 
     private void prepareFoodEntry(String result) {
         JSONObject resultJson = null;
-        int factor;
+        double factor;
         try {
             if(quantityEditText.getText().toString().equals("")){
                 factor = 100;
             } else {
-                factor = Integer.valueOf(quantityEditText.getText().toString());
+                factor = Double.valueOf(quantityEditText.getText().toString());
             }
             resultJson = new JSONObject(result);
             JSONObject food = resultJson.getJSONObject("food");
@@ -120,11 +122,11 @@ public class FoodsSearchFragment extends Fragment {
             JSONObject servs = food.getJSONObject("servings");
             JSONArray serving = servs.getJSONArray("serving");
             JSONObject servObject = serving.getJSONObject(0);
-            Integer cals = Integer.valueOf(servObject.getString("calories")) * factor/100;
+            Double cals = Double.valueOf(servObject.getString("calories")) * factor/100;
             Double carbs = Double.valueOf(servObject.getString("carbohydrate")) * factor/100;
             Double protein = Double.valueOf(servObject.getString("protein")) * factor/100;
             Double fat = Double.valueOf(servObject.getString("fat")) * factor/100;
-            Food newFoodEntry = new Food(name, String.valueOf(cals),
+            Food newFoodEntry = new Food(name, String.valueOf(Math.round(cals)),
                     String.valueOf(Math.round(carbs)), String.valueOf(Math.round(protein)),
                     String.valueOf(Math.round(fat)));
             newFoodEntry.setQuantity(factor);
@@ -146,11 +148,11 @@ public class FoodsSearchFragment extends Fragment {
                 String name = food.getString("food_name");
                 JSONObject servs = food.getJSONObject("servings");
                 JSONObject serving = servs.getJSONObject("serving");
-                Integer cals = Integer.valueOf(serving.getString("calories")) * factor/100;
+                Double cals = Double.valueOf(serving.getString("calories")) * factor/100;
                 Double carbs = Double.valueOf(serving.getString("carbohydrate")) * factor/100;
                 Double protein = Double.valueOf(serving.getString("protein")) * factor/100;
                 Double fat = Double.valueOf(serving.getString("fat")) * factor/100;
-                Food newFoodEntry = new Food(name, String.valueOf(cals),
+                Food newFoodEntry = new Food(name, String.valueOf(Math.round(cals)),
                         String.valueOf(Math.round(carbs)), String.valueOf(Math.round(protein)),
                         String.valueOf(Math.round(fat)));
                 newFoodEntry.setQuantity(Integer.valueOf(quantityEditText.getText().toString()));
